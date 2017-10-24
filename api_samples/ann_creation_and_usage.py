@@ -12,13 +12,14 @@ from ann.macro_layer.layer_structure.layers.FullConnectedWithSoftmaxLayer import
 
 '''
 
+
 def main():
     # tensorflow
     tf_sess = tf.Session()
 
     # Layers:
-    input_dim = [None, 100]
-    hidden_layer = FullConnected(inputs_amount=200)
+    input_dim = [None, 3]
+    hidden_layer = FullConnected(inputs_amount=20)
     out_layer = FullConnectedWithSoftmaxLayer(inputs_amount=10)
 
     # Layer Structures
@@ -34,7 +35,7 @@ def main():
     ann.connect_and_initialize()
 
     # Execute
-    ann.run()
+    print(ann.run())
 
 
 if __name__ == '__main__':
