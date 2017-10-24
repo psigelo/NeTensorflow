@@ -35,4 +35,3 @@ class LayerStructure(object):
             before_layers_amount = len(layer)
             position_new_layer = random.randint(0, before_layers_amount)
         self.layers.insert(position_new_layer, layer)
-
