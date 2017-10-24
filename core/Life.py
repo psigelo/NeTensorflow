@@ -33,7 +33,7 @@ class Life(object):
     @staticmethod
     def check_params(params):
         try:
-            if not isinstance(params['max_amount_species'], (int)):
+            if not isinstance(params['max_amount_species'], int):
                 print('max_amount_species must be integer')
                 return False
             if params['max_amount_species'] <= 0:
