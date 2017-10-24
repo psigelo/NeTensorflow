@@ -1,6 +1,3 @@
-import random
-
-
 class MacroLayer(object):
     def __init__(self, layers_structure=None):
         self.layers_structure_list = None
