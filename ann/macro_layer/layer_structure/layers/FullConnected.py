@@ -1,5 +1,7 @@
 import tensorflow as tf
 
+from ann.tensorflow_tools.variable_summaries import variable_summaries
+
 
 class FullConnected(object):
     def __init__(self, inputs_amount=None):
@@ -22,8 +24,11 @@ class FullConnected(object):
             if len(prev_layer_input_amount) > 1:
                 raise Exception('NotImplemented', "case not implemented:: input_size is list larger than 1 item")
         elif isinstance(prev_layer_input_amount, int):
-            self.__weights = tf.Variable(tf.truncated_normal([prev_layer_input_amount, self.inputs_amount], stddev=0.1))
-            self.__bias = tf.Variable(tf.constant(0.1, shape=[self.inputs_amount]))
+            with tf.name_scope('FullConnectedVariables'):
+                self.__weights = tf.Variable(tf.truncated_normal([prev_layer_input_amount, self.inputs_amount], stddev=0.1))
+                self.__bias = tf.Variable(tf.constant(0.1, shape=[self.inputs_amount]))
+                variable_summaries(self.__weights)
+                variable_summaries(self.__bias)
             self.output = tf.matmul(input_tensor, self.__weights) + self.__bias
         else:
             raise (NotImplemented, "input size type not recognized")

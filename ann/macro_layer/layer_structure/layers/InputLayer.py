@@ -1,5 +1,7 @@
 import tensorflow as tf
 
+from ann.tensorflow_tools.variable_summaries import variable_summaries
+
 
 class InputLayer(object):
     def __init__(self, inputs_amount):
@@ -16,7 +18,6 @@ class InputLayer(object):
 
         with tf.name_scope('Input'):
             self.inputs = tf.placeholder(tf.float32, [None, self.inputs_amount])
-
     def get_tensor(self):
         return self.inputs
 
