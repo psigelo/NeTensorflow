@@ -11,6 +11,7 @@ class ANN(object):
         self.last_layer = None
         self.first_layer = None
         self.train_writer = None
+        self.run_writer = None
         self.tf_summaries = None
         self.base_folder = base_folder
 
@@ -33,19 +34,31 @@ class ANN(object):
         self.last_layer = layers_refs[-1]
         self.first_layer = layers_refs[0]
         time_stamp = '{:%Y%m%d%H%M%S}'.format(datetime.datetime.now())
+        print("TimeStamp used: ", time_stamp)
         self.train_writer = \
             tf.summary.FileWriter(os.path.join(time_stamp, self.base_folder, './train'), self.tf_session.graph)
+        self.run_writer = \
+            tf.summary.FileWriter(os.path.join(time_stamp, self.base_folder, './run'), self.tf_session.graph)
         self.tf_summaries = tf.summary.merge_all()
 
     def initialize(self):
         self.tf_session.run(tf.global_variables_initializer())
 
-    def run(self):
+    def run(self, global_iteration, input_tensor_value, write_summaries=True):
         input_tensor = self.first_layer.get_input_tensor()
         output_tensor = self.last_layer.get_tensor()
-        import numpy as np
-        return self.tf_session.run(output_tensor, {input_tensor: [np.random.uniform(0.0, 10.0, 3)]})
+        result = self.tf_session.run(output_tensor, feed_dict={input_tensor: input_tensor_value})
+        if write_summaries:
+            self.write_graph_and_summaries(global_iteration=global_iteration, writer='run')
+        return result
 
-    def write_graph_and_summaries(self, global_iteration=None):
+    def write_graph_and_summaries(self, global_iteration=None, writer=None):
+        if writer == 'train':
+            tf_writer = self.train_writer
+        elif writer == 'run':
+            tf_writer = self.run_writer
+        else:
+            raise Exception('writer must be train or run')
         summaries = self.tf_session.run(self.tf_summaries)
-        self.train_writer.add_summary(summaries, global_iteration)
+        tf_writer.add_summary(summaries, global_iteration)
+

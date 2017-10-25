@@ -35,7 +35,7 @@ def main():
     ann.connect_and_initialize()
 
     # Create the graph
-    ann.write_graph_and_summaries(global_iteration=0)
+    ann.write_graph_and_summaries(global_iteration=0, writer='train')
 
 
 if __name__ == '__main__':

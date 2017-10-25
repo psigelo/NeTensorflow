@@ -35,7 +35,10 @@ def main():
     ann.connect_and_initialize()
 
     # Execute
-    print(ann.run())
+    for it in range(100):
+        import numpy as np
+        input_tensor_value = [np.random.uniform(0.0, 10.0, 3)]
+        print(ann.run(global_iteration=it, input_tensor_value=input_tensor_value))
 
 
 if __name__ == '__main__':
