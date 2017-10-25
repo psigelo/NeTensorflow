@@ -36,9 +36,9 @@ class ANN(object):
         time_stamp = '{:%Y%m%d%H%M%S}'.format(datetime.datetime.now())
         print("TimeStamp used: ", time_stamp)
         self.train_writer = \
-            tf.summary.FileWriter(os.path.join(time_stamp, self.base_folder, './train'), self.tf_session.graph)
+            tf.summary.FileWriter(os.path.join(self.base_folder, time_stamp,  'train'), self.tf_session.graph)
         self.run_writer = \
-            tf.summary.FileWriter(os.path.join(time_stamp, self.base_folder, './run'), self.tf_session.graph)
+            tf.summary.FileWriter(os.path.join(self.base_folder, time_stamp, 'run'), self.tf_session.graph)
         self.tf_summaries = tf.summary.merge_all()
 
     def initialize(self):

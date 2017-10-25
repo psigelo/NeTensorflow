@@ -31,7 +31,7 @@ def main():
     macro_layers = MacroLayer(layers_structure=[input_layer_structure, hidden_layer_structure, output_layer_structure])
 
     # ann
-    ann = ANN(macro_layers=macro_layers, tf_session=tf_sess, base_folder='./graphs_created/')
+    ann = ANN(macro_layers=macro_layers, tf_session=tf_sess, base_folder='./tensorboard_logs/')
     ann.connect_and_initialize()
 
     # Create the graph
