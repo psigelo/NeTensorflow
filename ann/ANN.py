@@ -5,7 +5,7 @@ import tensorflow as tf
 
 
 class ANN(object):
-    def __init__(self, macro_layers=None, tf_session=None, base_folder='.'):
+    def __init__(self, macro_layers=None, tf_session=None, base_folder='.', trainer_list=None):
         self.macro_layers = macro_layers
         self.tf_session = tf_session
         self.last_layer = None
@@ -14,6 +14,9 @@ class ANN(object):
         self.run_writer = None
         self.tf_summaries = None
         self.base_folder = base_folder
+        if not isinstance(trainer_list, list):
+            raise Exception('TrainerListIsNotList')
+        self.trainer_list = trainer_list
 
     def connect_and_initialize(self):
         self.connect()
@@ -52,6 +55,12 @@ class ANN(object):
             self.write_graph_and_summaries(global_iteration=global_iteration, writer='run')
         return result
 
+    def train_step(self,input_tensor_value, output_desired, global_iteration,  write_summaries=True):
+        for trainer in self.trainer_list:
+            self.tf_session.run(trainer.train_step)
+        if write_summaries:
+            self.write_graph_and_summaries(global_iteration=global_iteration, writer='run')
+
     def write_graph_and_summaries(self, global_iteration=None, writer=None):
         if writer == 'train':
             tf_writer = self.train_writer
@@ -62,3 +71,5 @@ class ANN(object):
         summaries = self.tf_session.run(self.tf_summaries)
         tf_writer.add_summary(summaries, global_iteration)
 
+    def get_last_lost_functions(self):
+        pass  # return something like [{name: 'Default', iteration: 9, value: 0.0004214}, {name: ...}]
