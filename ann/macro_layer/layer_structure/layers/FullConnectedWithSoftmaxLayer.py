@@ -14,7 +14,7 @@ class FullConnectedWithSoftmaxLayer(object):
         if self.output is not None:
             return self.output
         else:
-            raise (ValueError, "FullConnectedWithSoftmaxLayer Layer not connected, output does not exists")
+            raise Exception("FullConnectedWithSoftmaxLayer Layer not connected, output does not exists")
 
     def get_input_amount(self):
         return self.inputs_amount
