@@ -1,4 +1,5 @@
 import tensorflow as tf
+import numpy as np
 
 from tensorflow.examples.tutorials.mnist import input_data
 
@@ -24,8 +25,8 @@ def main():
     tf_sess = tf.Session()
 
     # Layers
-    input_dim = [None, 3]
-    hidden_layer = FullConnected(inputs_amount=20)
+    input_dim = [None, 784]
+    hidden_layer = FullConnected(inputs_amount=300)
     out_layer = FullConnectedWithSoftmaxLayer(inputs_amount=10)
 
     # Layer Structures
@@ -46,7 +47,7 @@ def main():
     # Execute
     for it in range(100):
         batch = mnist.train.next_batch(100)
-        ann.train_step(input_tensor_value=batch[0], output_desired=batch[1], global_iteration=it)
+        ann.train_step(input_tensor_value=batch[0], output_desired=batch[1].astype(np.float32), global_iteration=it)
 
 
 if __name__ == '__main__':
