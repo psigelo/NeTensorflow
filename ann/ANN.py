@@ -52,29 +52,27 @@ class ANN(object):
     def run(self, global_iteration, input_tensor_value, write_summaries=True):
         input_tensor = self.first_layer.get_input_tensor()
         output_tensor = self.last_layer.get_tensor()
-        result = self.tf_session.run(output_tensor, feed_dict={input_tensor: input_tensor_value})
         if write_summaries:
-            self.write_graph_and_summaries(global_iteration=global_iteration, writer='run')
+            summaries, result = self.tf_session.run([self.tf_summaries, output_tensor],
+                                                    feed_dict={input_tensor: input_tensor_value})
+            self.run_writer.add_summary(summaries, global_iteration)
+        else:
+            result = self.tf_session.run(output_tensor, feed_dict={input_tensor: input_tensor_value})
+
         return result
 
     def train_step(self,input_tensor_value, output_desired, global_iteration,  write_summaries=True):
         for trainer in self.trainer_list:
             input_tensor = self.first_layer.get_input_tensor()
             desired_output = trainer.desired_output
-            self.tf_session.run(trainer.train_step, feed_dict={input_tensor: input_tensor_value,
-                                                               desired_output: output_desired})
-        if write_summaries:
-            self.write_graph_and_summaries(global_iteration=global_iteration, writer='run')
-
-    def write_graph_and_summaries(self, global_iteration=None, writer=None):
-        if writer == 'train':
-            tf_writer = self.train_writer
-        elif writer == 'run':
-            tf_writer = self.run_writer
-        else:
-            raise Exception('writer must be train or run')
-        summaries = self.tf_session.run(self.tf_summaries)
-        tf_writer.add_summary(summaries, global_iteration)
+            if write_summaries:
+                summaries, _ = self.tf_session.run([self.tf_summaries, trainer.train_step],
+                                                   feed_dict={input_tensor: input_tensor_value,
+                                                              desired_output: output_desired})
+                self.train_writer.add_summary(summaries, global_iteration)
+            else:
+                self.tf_session.run( trainer.train_step, feed_dict={input_tensor: input_tensor_value,
+                                                                    desired_output: output_desired})
 
     def get_last_lost_functions(self):
         pass  # return something like [{name: 'Default', iteration: 9, value: 0.0004214}, {name: ...}]
