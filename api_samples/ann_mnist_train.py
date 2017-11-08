@@ -45,7 +45,7 @@ def main():
     ann.connect_and_initialize()
 
     # Execute
-    for it in range(100):
+    for it in range(1000):
         batch = mnist.train.next_batch(100)
         ann.train_step(input_tensor_value=batch[0], output_desired=batch[1].astype(np.float32), global_iteration=it)
 
