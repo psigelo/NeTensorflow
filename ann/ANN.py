@@ -59,7 +59,10 @@ class ANN(object):
 
     def train_step(self,input_tensor_value, output_desired, global_iteration,  write_summaries=True):
         for trainer in self.trainer_list:
-            self.tf_session.run(trainer.train_step)
+            input_tensor = self.first_layer.get_input_tensor()
+            desired_output = trainer.desired_output
+            self.tf_session.run(trainer.train_step, feed_dict={input_tensor: input_tensor_value,
+                                                               desired_output: output_desired})
         if write_summaries:
             self.write_graph_and_summaries(global_iteration=global_iteration, writer='run')
 

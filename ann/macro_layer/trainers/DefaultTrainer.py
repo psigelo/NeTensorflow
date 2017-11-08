@@ -18,7 +18,9 @@ class DefaultTrainer(object):
     def create_loss_function(self):
         self.last_layer = self.layers_structures[-1].layers[-1]
         self.output_last_layer = self.last_layer.get_tensor()
-        self.desired_output = tf.placeholder(tf.float32, [None, self.last_layer.get_input_amount()])
+        with tf.name_scope('DefaultTrainerDesiredOutput'):
+            self.desired_output = tf.placeholder(tf.float32, [None, self.last_layer.get_input_amount()])
+
         self.lost_function = tf.nn.softmax_cross_entropy_with_logits(labels=self.desired_output,
                                                                      logits=self.output_last_layer)
         self.__train_step = tf.train.GradientDescentOptimizer(0.5).minimize(self.lost_function)
