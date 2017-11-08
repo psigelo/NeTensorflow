@@ -36,13 +36,15 @@ class ANN(object):
         self.first_layer = layers_refs[0]
         time_stamp = '{:%Y%m%d%H%M%S}'.format(datetime.datetime.now())
         print("TimeStamp used: ", time_stamp)
+
+        for trainer in self.trainer_list:  # Must be before writers
+            trainer.create_loss_function()
+
         self.train_writer = \
             tf.summary.FileWriter(os.path.join(self.base_folder, time_stamp,  'train'), self.tf_session.graph)
         self.run_writer = \
             tf.summary.FileWriter(os.path.join(self.base_folder, time_stamp, 'run'), self.tf_session.graph)
         self.tf_summaries = tf.summary.merge_all()
-        for trainer in self.trainer_list:
-            trainer.create_loss_function()
 
     def initialize(self):
         self.tf_session.run(tf.global_variables_initializer())
