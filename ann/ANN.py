@@ -43,6 +43,8 @@ class ANN(object):
         self.run_writer = \
             tf.summary.FileWriter(os.path.join(self.base_folder, time_stamp, 'run'), self.tf_session.graph)
         self.tf_summaries = tf.summary.merge_all()
+        for trainer in self.trainer_list:
+            trainer.create_loss_function()
 
     def initialize(self):
         self.tf_session.run(tf.global_variables_initializer())

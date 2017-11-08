@@ -14,7 +14,6 @@ class DefaultTrainer(object):
         self.output_last_layer = None
         self.desired_output = None
         self.lost_function = None
-        self.create_loss_function()
 
     def create_loss_function(self):
         self.last_layer = self.layers_structures[-1].layers[-1]
