@@ -13,17 +13,27 @@ class DefaultTrainer(object):
         self.optimizer_step = None
         self.output_last_layer = None
         self.desired_output = None
-        self.lost_function = None
+        self.loss_function = None
 
     def create_loss_function(self):
         self.last_layer = self.layers_structures[-1].layers[-1]
         self.output_last_layer = self.last_layer.get_tensor()
-        with tf.name_scope('DefaultTrainerDesiredOutput'):
+        with tf.name_scope('desired_output'):
             self.desired_output = tf.placeholder(tf.float32, [None, self.last_layer.get_input_amount()])
 
-        self.lost_function = tf.nn.softmax_cross_entropy_with_logits(labels=self.desired_output,
-                                                                     logits=self.output_last_layer)
-        self.__train_step = tf.train.GradientDescentOptimizer(0.5).minimize(self.lost_function)
+        with tf.name_scope('loss_func'):
+            self.loss_function = tf.reduce_mean(tf.nn.softmax_cross_entropy_with_logits(labels=self.desired_output,
+                                                                                        logits=self.output_last_layer))
+        tf.summary.scalar('loss', self.loss_function)
+
+        with tf.name_scope('accuracy'):
+            with tf.name_scope('correct_prediction'):
+                correct_prediction = tf.equal(tf.argmax(self.output_last_layer, 1), tf.argmax(self.desired_output, 1))
+            with tf.name_scope('accuracy'):
+                accuracy = tf.reduce_mean(tf.cast(correct_prediction, tf.float32))
+        tf.summary.scalar('accuracy', accuracy)
+
+        self.__train_step = tf.train.AdamOptimizer(1e-4).minimize(self.loss_function)
 
     @property
     def train_step(self):  # without a setter for security reasons
