@@ -5,7 +5,7 @@ import tensorflow as tf
 
 
 class ANN(object):
-    def __init__(self, macro_layers=None, tf_session=None, base_folder='.', trainer_list=None):
+    def __init__(self, macro_layers=None, tf_session=None, base_folder='.', trainer_list=[]):
         self.macro_layers = macro_layers
         self.tf_session = tf_session
         self.last_layer = None
@@ -14,8 +14,6 @@ class ANN(object):
         self.run_writer = None
         self.tf_summaries = None
         self.base_folder = base_folder
-        if not isinstance(trainer_list, list):
-            raise Exception('TrainerListIsNotList')
         self.trainer_list = trainer_list
 
     def connect_and_initialize(self):
