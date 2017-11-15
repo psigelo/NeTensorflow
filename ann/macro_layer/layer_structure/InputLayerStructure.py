@@ -1,11 +1,22 @@
-from ann.macro_layer.layer_structure.LayerStructure import LayerStructure
+from ann.macro_layer.layer_structure.LayerStructure import LayerStructure, LayerType
 from ann.macro_layer.layer_structure.layers.InputLayer import InputLayer
 
 
 class InputLayerStructure(LayerStructure):
-    def __init__(self, input_dimension, macro_layer_name="InputLayer"):
-        super(InputLayerStructure, self).__init__(macro_layer_name=macro_layer_name, position=0)
+    def __init__(self, input_dimension, dataset_dimension=None, macro_layer_name="InputLayer"):
+        self.layer_type = None
+        if len(input_dimension) == 4:
+            self.layer_type = LayerType.IMAGE
+        elif len(input_dimension) == 2:
+            self.layer_type = LayerType.ONE_DIMENSION
+        else:
+            raise Exception('LayerType can not be deduced')
+        super(InputLayerStructure, self).__init__(macro_layer_name=macro_layer_name, position=0,
+                                                  layer_type=self.layer_type)
         self.__precedence_key = -1  # only for Input Layer
-        if not isinstance(input_dimension, list):
-            raise (ValueError, "input dimension must be a list")
-        self.layers = [InputLayer(input_dimension)]
+        self.layers = [InputLayer(input_dimension, dataset_dimension)]
+
+        #check all layers have same layertype
+        for layer in self.layers:
+            if layer.layer_type != self.layer_type:
+                raise Exception('LayerType is not correctly setted')
