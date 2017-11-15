@@ -19,4 +19,5 @@ class TranslatorLayerImage2OneDimesion(object):
             raise Exception('PrevLayerMustBeTypeImage')
 
         self.inputs_amount = prev_layer.height_image * prev_layer.width_image * prev_layer.filters_amount
-        self.output = tf.reshape(input_tensor, [-1, self.inputs_amount])
+        with tf.name_scope('TranslatorLayerImage2OneDimesion'):
+            self.output = tf.reshape(input_tensor, [-1, self.inputs_amount])
