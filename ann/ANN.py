@@ -3,6 +3,9 @@ import datetime
 import os
 import tensorflow as tf
 
+from ann.macro_layer.layer_structure.LayerStructure import LayerType
+from ann.macro_layer.layer_structure.layers.TranslatorLayerImage2OneDimension import TranslatorLayerImage2OneDimesion
+
 
 class ANN(object):
     def __init__(self, macro_layers=None, tf_session=None, base_folder='.', trainer_list=[]):
@@ -22,6 +25,19 @@ class ANN(object):
 
     def connect(self):
         layers_refs = list()
+
+        # first solve union problems in all layers
+        prev_layer = None
+        for layer_structures in self.macro_layers.layers_structure_list:
+            for layer in layer_structures.layers:
+                if prev_layer is not None:
+                    if layer.layer_type != prev_layer.layer_type:
+                        if (prev_layer.layer_type == LayerType.IMAGE) \
+                                and (layer.layer_type == LayerType.ONE_DIMENSION):
+                            layer_structures.add_layer_at_bottom(TranslatorLayerImage2OneDimesion())
+                        else:
+                            raise Exception('CaseNotDefined')
+                prev_layer = layer
 
         # first get all layers
         for layer_structures in self.macro_layers.layers_structure_list:
