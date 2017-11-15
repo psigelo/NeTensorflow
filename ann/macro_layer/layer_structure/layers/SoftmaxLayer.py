@@ -4,7 +4,8 @@ import tensorflow as tf
 class SoftmaxLayer(object):
     def __init__(self):
         self.output = None
-        self.input_amount = None
+        self.inputs_amount = None
+        self.layer_type = None
 
     def get_tensor(self):
         if self.output is not None:

@@ -9,6 +9,7 @@ class FullConnectedWithSoftmaxLayer(object):
         self.output = None
         self.__weights = None
         self.__bias = None
+        self.layer_type = None
 
     def get_tensor(self):
         if self.output is not None:

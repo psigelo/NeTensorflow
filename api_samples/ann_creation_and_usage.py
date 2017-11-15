@@ -3,7 +3,7 @@ import tensorflow as tf
 from ann.ANN import ANN
 from ann.macro_layer.MacroLayer import MacroLayer
 from ann.macro_layer.layer_structure.InputLayerStructure import InputLayerStructure
-from ann.macro_layer.layer_structure.LayerStructure import LayerStructure
+from ann.macro_layer.layer_structure.LayerStructure import LayerStructure, LayerType
 from ann.macro_layer.layer_structure.layers.FullConnected import FullConnected
 from ann.macro_layer.layer_structure.layers.FullConnectedWithSoftmaxLayer import FullConnectedWithSoftmaxLayer
 
@@ -24,8 +24,8 @@ def main():
 
     # Layer Structures
     input_layer_structure = InputLayerStructure(input_dim)
-    hidden_layer_structure = LayerStructure('Hidden', position=0, layers=[hidden_layer])
-    output_layer_structure = LayerStructure('Output', position=1, layers=[out_layer])
+    hidden_layer_structure = LayerStructure('Hidden', position=0, layer_type=LayerType.ONE_DIMENSION, layers=[hidden_layer])
+    output_layer_structure = LayerStructure('Output', position=1, layer_type=LayerType.ONE_DIMENSION,layers=[out_layer])
 
     # Macro Layer
     macro_layers = MacroLayer(layers_structure=[input_layer_structure, hidden_layer_structure, output_layer_structure])
