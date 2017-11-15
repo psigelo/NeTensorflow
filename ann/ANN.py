@@ -46,14 +46,14 @@ class ANN(object):
 
         # Connect all layers
         for it in range(1, len(layers_refs)):  # Starting from second layer
-            layers_refs[it].connect_layer(layers_refs[it - 1].get_input_amount(), layers_refs[it - 1].get_tensor())
+            layers_refs[it].connect_layer(layers_refs[it - 1], layers_refs[it - 1].get_tensor())
 
         self.last_layer = layers_refs[-1]
         self.first_layer = layers_refs[0]
         time_stamp = '{:%Y%m%d%H%M%S}'.format(datetime.datetime.now())
         print("TimeStamp used: ", time_stamp)
 
-        for trainer in self.trainer_list:  # Must be before writers
+        for trainer in self.trainer_list:  # Must do it before writers
             trainer.create_loss_function()
 
         self.train_writer = \

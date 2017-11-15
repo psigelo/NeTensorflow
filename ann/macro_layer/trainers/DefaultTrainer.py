@@ -19,7 +19,7 @@ class DefaultTrainer(object):
         self.last_layer = self.layers_structures[-1].layers[-1]
         self.output_last_layer = self.last_layer.get_tensor()
         with tf.name_scope('desired_output'):
-            self.desired_output = tf.placeholder(tf.float32, [None, self.last_layer.get_input_amount()])
+            self.desired_output = tf.placeholder(tf.float32, [None, self.last_layer.inputs_amount])
 
         with tf.name_scope('loss_func'):
             self.loss_function = tf.reduce_mean(tf.nn.softmax_cross_entropy_with_logits(labels=self.desired_output,
