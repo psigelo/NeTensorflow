@@ -8,6 +8,7 @@ from ann.macro_layer.MacroLayer import MacroLayer
 from ann.macro_layer.layer_structure.InputLayerStructure import InputLayerStructure
 from ann.macro_layer.layer_structure.LayerStructure import LayerStructure, LayerType
 from ann.macro_layer.layer_structure.layers.ConvolutionalLayer import ConvolutionalLayer
+from ann.macro_layer.layer_structure.layers.ConvolutionalLayerWithPoolMax2x2 import ConvolutionalLayerWithPoolMax2x2
 from ann.macro_layer.layer_structure.layers.FullConnected import FullConnected
 from ann.macro_layer.layer_structure.layers.FullConnectedWithSoftmaxLayer import FullConnectedWithSoftmaxLayer
 from ann.macro_layer.trainers.DefaultTrainer import DefaultTrainer
@@ -27,14 +28,18 @@ def main():
     # Layers
     input_dim = [None, 28, 28, 1]
     dataset_dimension = [None, 784]
-    convolutional_layer = ConvolutionalLayer(height_patch=5, width_patch=5, filters_amount=32, strides=[1,1,1,1])
+    convolutional_pool_layer_1 = ConvolutionalLayerWithPoolMax2x2(height_patch=5,
+                                                                  width_patch=5, filters_amount=32, strides=[1,1,1,1])
+    convolutional_pool_layer_2 = ConvolutionalLayerWithPoolMax2x2(height_patch=5,
+                                                                  width_patch=5, filters_amount=32, strides=[1,1,1,1])
     logic_layer = FullConnected(inputs_amount=300)
     out_layer = FullConnectedWithSoftmaxLayer(inputs_amount=10)
 
     # Layer Structures
     input_layer_structure = InputLayerStructure(input_dim, dataset_dimension)
     features_layer_structure = LayerStructure('Features', position=0,
-                                              layer_type=LayerType.IMAGE, layers=[convolutional_layer])
+                                              layer_type=LayerType.IMAGE, layers=[convolutional_pool_layer_1,
+                                                                                  convolutional_pool_layer_2])
     logic_layer_structure = LayerStructure('Logic', position=1,
                                            layer_type=LayerType.ONE_DIMENSION, layers=[logic_layer])
     output_layer_structure = LayerStructure('Output', position=2,
@@ -53,7 +58,7 @@ def main():
     ann.connect_and_initialize()
 
     # Execute
-    for it in range(1000):
+    for it in range(20000):
         batch = mnist.train.next_batch(100)
         ann.train_step(input_tensor_value=batch[0], output_desired=batch[1].astype(np.float32), global_iteration=it)
         print("Train iteration: ", it)
