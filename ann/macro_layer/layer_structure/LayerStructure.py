@@ -8,8 +8,8 @@ class LayerType(Enum):
 
 
 class LayerStructure(object):
-    def __init__(self, macro_layer_name, position, layer_type, layers=None):
-        if not isinstance(macro_layer_name, str):
+    def __init__(self, layer_structure_name, position, layer_type, layers=None):
+        if not isinstance(layer_structure_name, str):
             raise ValueError("macro_layer_name must be string")
         if isinstance(position, int):
             if position < 0:
@@ -17,7 +17,7 @@ class LayerStructure(object):
         if not isinstance(layer_type, LayerType):
             raise Exception('layer_type is not LayerType')
         self.layer_type = layer_type
-        self.macro_layer_name = macro_layer_name
+        self.layer_structure_name = layer_structure_name
         self.__precedence_key = position
         self.layers = list()
 
@@ -25,6 +25,7 @@ class LayerStructure(object):
             self.layers = layers
             for layer in layers:
                 layer.layer_type = layer_type
+                layer.layer_structure_name = layer_structure_name
 
     @property
     def precedence_key(self):

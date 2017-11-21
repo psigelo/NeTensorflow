@@ -3,7 +3,7 @@ from ann.macro_layer.layer_structure.layers.InputLayer import InputLayer
 
 
 class InputLayerStructure(LayerStructure):
-    def __init__(self, input_dimension, dataset_dimension=None, macro_layer_name="InputLayer"):
+    def __init__(self, input_dimension, dataset_dimension=None, layer_structure_name="InputLayer"):
         self.layer_type = None
         if len(input_dimension) == 4:
             self.layer_type = LayerType.IMAGE
@@ -11,7 +11,7 @@ class InputLayerStructure(LayerStructure):
             self.layer_type = LayerType.ONE_DIMENSION
         else:
             raise Exception('LayerType can not be deduced')
-        super(InputLayerStructure, self).__init__(macro_layer_name=macro_layer_name, position=0,
+        super(InputLayerStructure, self).__init__(layer_structure_name=layer_structure_name, position=0,
                                                   layer_type=self.layer_type)
         self.__precedence_key = -1  # only for Input Layer
         self.layers = [InputLayer(input_dimension, dataset_dimension)]
