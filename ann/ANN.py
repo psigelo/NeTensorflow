@@ -94,8 +94,11 @@ class ANN(object):
 
         return result
 
-    def train_step(self,input_tensor_value, output_desired, global_iteration,  write_summaries=True):
+    def train_step(self,input_tensor_value, output_desired, global_iteration,  write_summaries=True, trainers=None):
         for trainer in self.trainer_list:
+            if trainers is not None:
+                if trainer.uuid not in list(map(lambda x: x.uuid, trainers)):
+                    continue
             input_tensor = self.first_layer.get_input_tensor()
             desired_output = trainer.desired_output
             if write_summaries:
