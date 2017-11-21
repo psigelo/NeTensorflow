@@ -23,3 +23,7 @@ class TranslatorLayerImage2OneDimesion(object):
         self.inputs_amount = prev_layer.height_image * prev_layer.width_image * prev_layer.filters_amount
         with tf.name_scope('TranslatorLayerImage2OneDimesion'):
             self.output = tf.reshape(input_tensor, [-1, self.inputs_amount])
+
+    @property
+    def layer_variables(self):
+        return list()

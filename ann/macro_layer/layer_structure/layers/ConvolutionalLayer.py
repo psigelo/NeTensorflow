@@ -51,5 +51,6 @@ class ConvolutionalLayer(object):
         else:
             raise Exception('padding name not supported')
 
-    def get_variables(self):
+    @property
+    def layer_variables(self):
         return [self.__weights, self.__bias]

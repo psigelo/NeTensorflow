@@ -30,5 +30,6 @@ class FullConnectedWithSoftmaxLayer(object):
                 self.summaries += variable_summaries(self.__bias)
             self.output = tf.nn.softmax(tf.matmul(input_tensor, self.__weights) + self.__bias)
 
-    def get_variables(self):
+    @property
+    def layer_variables(self):
         return [self.__weights, self.__bias]

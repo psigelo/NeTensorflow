@@ -41,9 +41,9 @@ class InputLayer(object):
     def connect_layer(_):
         assert False, "Error:: Connecting process start from second layer"
 
-    @staticmethod
-    def get_variables():
-        return None
+    @property
+    def layer_variables(self):
+        return list()
 
     def get_input_tensor(self):
         return self.inputs

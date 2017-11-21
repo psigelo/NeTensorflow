@@ -38,6 +38,13 @@ class DefaultTrainer(object):
 
                 self.train_summary = tf.summary.merge([tf.summary.scalar('loss', self.loss_function),
                                                        tf.summary.scalar('accuracy', accuracy)])
+        var_list = list()
+        for layers_str in self.layers_structures:
+            for layer in layers_str.layers:
+                var_list += layer.layer_variables
+
+        self.__train_step = tf.train.AdamOptimizer(1e-4).minimize(self.loss_function, var_list=var_list)
+
     @property
     def train_step(self):  # without a setter for security reasons
         return self.__train_step
