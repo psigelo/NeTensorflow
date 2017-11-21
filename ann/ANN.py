@@ -1,6 +1,8 @@
 import datetime
 
 import os
+
+import random
 import tensorflow as tf
 
 from ann.macro_layer.layer_structure.LayerStructure import LayerType
@@ -15,7 +17,7 @@ class ANN(object):
         self.first_layer = None
         self.train_writer = None
         self.run_writer = None
-        self.tf_summaries = None
+        self.tf_summaries_ann = None
         self.base_folder = base_folder
         self.trainer_list = trainer_list
 
@@ -60,7 +62,12 @@ class ANN(object):
             tf.summary.FileWriter(os.path.join(self.base_folder, time_stamp,  'train'), self.tf_session.graph)
         self.run_writer = \
             tf.summary.FileWriter(os.path.join(self.base_folder, time_stamp, 'run'), self.tf_session.graph)
-        self.tf_summaries = tf.summary.merge_all()
+
+        summaries = list()
+        for layers_structures in self.macro_layers.layers_structure_list:
+                for layer in layers_structures.layers:
+                    summaries += layer.summaries
+        self.tf_summaries_ann = tf.summary.merge(summaries)
 
     def initialize(self):
         self.tf_session.run(tf.global_variables_initializer())
@@ -68,10 +75,20 @@ class ANN(object):
     def run(self, global_iteration, input_tensor_value, write_summaries=True):
         input_tensor = self.first_layer.get_input_tensor()
         output_tensor = self.last_layer.get_tensor()
+        run_options = None
+        run_metadata = None
         if write_summaries:
-            summaries, result = self.tf_session.run([self.tf_summaries, output_tensor],
-                                                    feed_dict={input_tensor: input_tensor_value})
-            self.run_writer.add_summary(summaries, global_iteration)
+            if random.random() < 0.01:
+                run_options = tf.RunOptions(trace_level=tf.RunOptions.FULL_TRACE)
+                run_metadata = tf.RunMetadata()
+            summaries_ann, result = self.tf_session.run([self.tf_summaries_ann, output_tensor],
+                                                        feed_dict={input_tensor: input_tensor_value},
+                                                        options=run_options, run_metadata=run_metadata)
+            if run_metadata is not None:
+                self.run_writer.add_run_metadata(run_metadata, 'step%d' % global_iteration)
+
+            self.run_writer.add_summary(summaries_ann, global_iteration)
+
         else:
             result = self.tf_session.run(output_tensor, feed_dict={input_tensor: input_tensor_value})
 
@@ -82,13 +99,20 @@ class ANN(object):
             input_tensor = self.first_layer.get_input_tensor()
             desired_output = trainer.desired_output
             if write_summaries:
-                summaries, _ = self.tf_session.run([self.tf_summaries, trainer.train_step],
-                                                   feed_dict={input_tensor: input_tensor_value,
-                                                              desired_output: output_desired})
-                self.train_writer.add_summary(summaries, global_iteration)
+                run_options = None
+                run_metadata = None
+                if random.random() < 0.01:
+                    run_options = tf.RunOptions(trace_level=tf.RunOptions.FULL_TRACE)
+                    run_metadata = tf.RunMetadata()
+                summaries_ann, summaries_train, _ = self.tf_session.run([self.tf_summaries_ann, trainer.train_summary,
+                                                                         trainer.train_step],
+                                                                        feed_dict={input_tensor: input_tensor_value,
+                                                                                   desired_output: output_desired},
+                                                                        options=run_options, run_metadata=run_metadata)
+                if run_metadata is not None:
+                    self.train_writer.add_run_metadata(run_metadata, 'step%d' % global_iteration)
+                self.train_writer.add_summary(summaries_ann, global_iteration)
+                self.train_writer.add_summary(summaries_train, global_iteration)
             else:
                 self.tf_session.run( trainer.train_step, feed_dict={input_tensor: input_tensor_value,
                                                                     desired_output: output_desired})
-
-    def get_last_lost_functions(self):
-        pass  # return something like [{name: 'Default', iteration: 9, value: 0.0004214}, {name: ...}]

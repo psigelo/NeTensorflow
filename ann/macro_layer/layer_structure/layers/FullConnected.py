@@ -10,6 +10,8 @@ class FullConnected(object):
         self.__weights = None
         self.__bias = None
         self.layer_type = None
+        self.layer_structure_name = None
+        self.summaries = list()
 
     def get_tensor(self):
         if self.output is not None:
@@ -22,10 +24,10 @@ class FullConnected(object):
             with tf.name_scope('weights'):
                 self.__weights = tf.Variable(tf.truncated_normal(
                     [prev_layer.inputs_amount, self.inputs_amount], stddev=0.1))
-                variable_summaries(self.__weights)
+                self.summaries = self.summaries + variable_summaries(self.__weights)
             with tf.name_scope('bias'):
                 self.__bias = tf.Variable(tf.constant(0.1, shape=[self.inputs_amount]))
-                variable_summaries(self.__bias)
+                self.summaries = self.summaries + variable_summaries(self.__bias)
             self.output = tf.matmul(input_tensor, self.__weights) + self.__bias
 
     def get_variables(self):

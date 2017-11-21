@@ -12,6 +12,8 @@ class InputLayer(object):
         self.layer_type = None
         self.height_image = None
         self.width_image = None
+        self.layer_structure_name = None
+        self.summaries = list()
 
         if len(inputs_dimension) == 4:
             self.layer_type = LayerType.IMAGE

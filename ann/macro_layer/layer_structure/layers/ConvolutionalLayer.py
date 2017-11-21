@@ -18,6 +18,9 @@ class ConvolutionalLayer(object):
         self.layer_type = None
         self.height_image = None
         self.width_image = None
+        self.layer_structure_name = None
+        self.summaries = list()
+
 
     def get_tensor(self):
         if self.output is not None:
@@ -31,10 +34,10 @@ class ConvolutionalLayer(object):
                 self.__weights = tf.Variable(tf.truncated_normal(
                     [self.height_patch, self.width_patch, prev_layer.filters_amount, self.filters_amount],
                     stddev=0.1))
-                variable_summaries(self.__weights)
+                self.summaries =  self.summaries + variable_summaries(self.__weights)
             with tf.name_scope('bias'):
                 self.__bias = tf.Variable(tf.constant(0.1, shape=[self.filters_amount]))
-                variable_summaries(self.__bias)
+                self.summaries = self.summaries + variable_summaries(self.__bias)
             self.output = tf.nn.relu(
                 tf.nn.conv2d(input_tensor, self.__weights, self.strides, padding=self.padding) + self.__bias)
             self.calc_image_height_width(prev_layer)

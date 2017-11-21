@@ -7,6 +7,8 @@ class TranslatorLayerImage2OneDimesion(object):
     def __init__(self):
         self.inputs_amount = None
         self.output = None
+        self.layer_structure_name = None
+        self.summaries = list()
 
     def get_tensor(self):
         if self.output is not None:

@@ -14,6 +14,7 @@ class DefaultTrainer(object):
         self.output_last_layer = None
         self.desired_output = None
         self.loss_function = None
+        self.train_summary = None
 
     def create_loss_function(self):
         self.last_layer = self.layers_structures[-1].layers[-1]
@@ -35,6 +36,8 @@ class DefaultTrainer(object):
 
         self.__train_step = tf.train.AdamOptimizer(1e-4).minimize(self.loss_function)
 
+                self.train_summary = tf.summary.merge([tf.summary.scalar('loss', self.loss_function),
+                                                       tf.summary.scalar('accuracy', accuracy)])
     @property
     def train_step(self):  # without a setter for security reasons
         return self.__train_step
