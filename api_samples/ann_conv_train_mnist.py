@@ -7,7 +7,6 @@ from ann.ANN import ANN
 from ann.macro_layer.MacroLayer import MacroLayer
 from ann.macro_layer.layer_structure.InputLayerStructure import InputLayerStructure
 from ann.macro_layer.layer_structure.LayerStructure import LayerStructure, LayerType
-from ann.macro_layer.layer_structure.layers.ConvolutionalLayer import ConvolutionalLayer
 from ann.macro_layer.layer_structure.layers.ConvolutionalLayerWithPoolMax2x2 import ConvolutionalLayerWithPoolMax2x2
 from ann.macro_layer.layer_structure.layers.FullConnected import FullConnected
 from ann.macro_layer.layer_structure.layers.FullConnectedWithSoftmaxLayer import FullConnectedWithSoftmaxLayer
@@ -28,10 +27,10 @@ def main():
     # Layers
     input_dim = [None, 28, 28, 1]
     dataset_dimension = [None, 784]
-    convolutional_pool_layer_1 = ConvolutionalLayerWithPoolMax2x2(height_patch=5,
-                                                                  width_patch=5, filters_amount=32, strides=[1,1,1,1])
-    convolutional_pool_layer_2 = ConvolutionalLayerWithPoolMax2x2(height_patch=5,
-                                                                  width_patch=5, filters_amount=32, strides=[1,1,1,1])
+    convolutional_pool_layer_1 = ConvolutionalLayerWithPoolMax2x2(height_patch=5, width_patch=5, filters_amount=32,
+                                                                  strides=[1, 1, 1, 1])
+    convolutional_pool_layer_2 = ConvolutionalLayerWithPoolMax2x2(height_patch=5, width_patch=5, filters_amount=32,
+                                                                  strides=[1, 1, 1, 1])
     logic_layer = FullConnected(inputs_amount=300)
     out_layer = FullConnectedWithSoftmaxLayer(inputs_amount=10)
 

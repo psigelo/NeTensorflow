@@ -44,7 +44,7 @@ class ConvolutionalLayerWithPoolMax2x2(ConvolutionalLayer):
 
     @property
     def pool_output(self):
-        return self.__max_pool_padding
+        return self.__pool_output
 
     @pool_output.setter
     def pool_output(self, pool_output):

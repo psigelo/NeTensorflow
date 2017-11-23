@@ -50,7 +50,7 @@ class FullConnectedWithSoftmaxLayer(object):
 
     @property
     def weights(self):
-        return self.__layer_structure_name
+        return self.__weights
 
     @weights.setter
     def weights(self, weight):

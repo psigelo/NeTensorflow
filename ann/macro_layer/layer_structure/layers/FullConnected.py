@@ -26,13 +26,13 @@ class FullConnected(object):
             with tf.name_scope('weights'):
                 self.weights = tf.Variable(tf.truncated_normal(
                     [prev_layer.inputs_amount, self.inputs_amount], stddev=0.1))
-                self.summaries = self.summaries + variable_summaries(self.__weights)
+#                self.summaries = self.summaries + variable_summaries(self.weights)
             with tf.name_scope('bias'):
                 self.bias = tf.Variable(tf.constant(0.1, shape=[self.inputs_amount]))
-                self.summaries = self.summaries + variable_summaries(self.__bias)
-            self.output = tf.matmul(input_tensor, self.__weights) + self.__bias
+                self.summaries = self.summaries + variable_summaries(self.bias)
+            self.output = tf.matmul(input_tensor, self.weights) + self.bias
 
-        self.save_and_restore_dictionary.update({'weight': self.__weights.name, 'bias': self.__bias.name,
+        self.save_and_restore_dictionary.update({'weight': self.weights.name, 'bias': self.bias.name,
                                                  'summaries': list(map(lambda s: s.name, self.summaries))})
 
     @property
@@ -50,7 +50,7 @@ class FullConnected(object):
 
     @property
     def weights(self):
-        return self.__layer_structure_name
+        return self.__weights
 
     @weights.setter
     def weights(self, weight):
