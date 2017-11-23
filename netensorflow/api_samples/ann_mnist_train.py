@@ -3,13 +3,13 @@ import numpy as np
 
 from tensorflow.examples.tutorials.mnist import input_data
 
-from ann.ANN import ANN
-from ann.macro_layer.MacroLayer import MacroLayer
-from ann.macro_layer.layer_structure.InputLayerStructure import InputLayerStructure
-from ann.macro_layer.layer_structure.LayerStructure import LayerStructure, LayerType
-from ann.macro_layer.layer_structure.layers.FullConnected import FullConnected
-from ann.macro_layer.layer_structure.layers.FullConnectedWithSoftmaxLayer import FullConnectedWithSoftmaxLayer
-from ann.macro_layer.trainers.DefaultTrainer import DefaultTrainer
+from netensorflow.ann.ANN import ANN
+from netensorflow.ann.macro_layer.MacroLayer import MacroLayer
+from netensorflow.ann.macro_layer.layer_structure.InputLayerStructure import InputLayerStructure
+from netensorflow.ann.macro_layer.layer_structure.LayerStructure import LayerStructure, LayerType
+from netensorflow.ann.macro_layer.layer_structure.layers.FullConnected import FullConnected
+from netensorflow.ann.macro_layer.layer_structure.layers.FullConnectedWithSoftmaxLayer import FullConnectedWithSoftmaxLayer
+from netensorflow.ann.macro_layer.trainers.DefaultTrainer import DefaultTrainer
 
 '''
     ANN mnist training simple sample

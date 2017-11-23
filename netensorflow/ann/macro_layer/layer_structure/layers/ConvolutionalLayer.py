@@ -1,6 +1,6 @@
 import tensorflow as tf
 
-from ann.tensorflow_tools.variable_summaries import variable_summaries
+from netensorflow.ann.tensorflow_tools.variable_summaries import variable_summaries
 
 
 class ConvolutionalLayer(object):

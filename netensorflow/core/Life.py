@@ -1,6 +1,6 @@
 import sys
 
-from core.SpeciesList import SpeciesList
+from netensorflow.core.SpeciesList import SpeciesList
 
 
 class Life(object):

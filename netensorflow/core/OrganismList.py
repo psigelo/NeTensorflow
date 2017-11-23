@@ -1,4 +1,4 @@
-from core.Organism import Organism
+from netensorflow.core.Organism import Organism
 
 
 class OrganismList(object):

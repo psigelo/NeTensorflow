@@ -4,9 +4,10 @@ import random
 import uuid
 
 import tensorflow as tf
-from ann.macro_layer.layer_structure.LayerStructure import LayerType
+from netensorflow.ann.macro_layer.layer_structure.LayerStructure import LayerType
 
-from ann.macro_layer.layer_structure.layers.TranslatorLayerImage2OneDimension import TranslatorLayerImage2OneDimesion
+from netensorflow.ann.macro_layer.layer_structure.layers.TranslatorLayerImage2OneDimension import   \
+    TranslatorLayerImage2OneDimesion
 
 
 class ANN(object):

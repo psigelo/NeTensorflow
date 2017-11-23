@@ -1,4 +1,4 @@
-from core.Specie import Specie
+from netensorflow.core.Specie import Specie
 
 
 class SpeciesList(object):

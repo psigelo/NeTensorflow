@@ -1,11 +1,11 @@
 import tensorflow as tf
 
-from ann.ANN import ANN
-from ann.macro_layer.MacroLayer import MacroLayer
-from ann.macro_layer.layer_structure.InputLayerStructure import InputLayerStructure
-from ann.macro_layer.layer_structure.LayerStructure import LayerStructure, LayerType
-from ann.macro_layer.layer_structure.layers.FullConnected import FullConnected
-from ann.macro_layer.layer_structure.layers.FullConnectedWithSoftmaxLayer import FullConnectedWithSoftmaxLayer
+from netensorflow.ann.ANN import ANN
+from netensorflow.ann.macro_layer.MacroLayer import MacroLayer
+from netensorflow.ann.macro_layer.layer_structure.InputLayerStructure import InputLayerStructure
+from netensorflow.ann.macro_layer.layer_structure.LayerStructure import LayerStructure, LayerType
+from netensorflow.ann.macro_layer.layer_structure.layers.FullConnected import FullConnected
+from netensorflow.ann.macro_layer.layer_structure.layers.FullConnectedWithSoftmaxLayer import FullConnectedWithSoftmaxLayer
 
 '''
     ann Creation and simple usage, the goal of this code is simply run the most simpler artificial neural network 

@@ -1,6 +1,6 @@
-from ann.macro_layer.layer_structure.layers.InputLayer import InputLayer
+from netensorflow.ann.macro_layer.layer_structure.layers.InputLayer import InputLayer
 
-from ann.macro_layer.layer_structure.LayerStructure import LayerStructure, LayerType
+from netensorflow.ann.macro_layer.layer_structure.LayerStructure import LayerStructure, LayerType
 
 
 class InputLayerStructure(LayerStructure):

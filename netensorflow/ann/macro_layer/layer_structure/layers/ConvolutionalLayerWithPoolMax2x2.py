@@ -1,7 +1,7 @@
 import numpy as np
 import tensorflow as tf
 
-from ann.macro_layer.layer_structure.layers.ConvolutionalLayer import ConvolutionalLayer
+from netensorflow.ann.macro_layer.layer_structure.layers.ConvolutionalLayer import ConvolutionalLayer
 
 
 class ConvolutionalLayerWithPoolMax2x2(ConvolutionalLayer):
