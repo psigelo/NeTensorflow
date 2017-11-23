@@ -1,6 +1,6 @@
 import tensorflow as tf
 
-from netensorflow.ann.macro_layer.layer_structure.LayerStructure import LayerType
+from ann.macro_layer.layer_structure.LayerStructure import LayerType
 
 
 class TranslatorLayerImage2OneDimesion(object):
