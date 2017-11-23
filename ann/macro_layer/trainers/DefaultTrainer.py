@@ -18,6 +18,7 @@ class DefaultTrainer(object):
         self.desired_output = None
         self.loss_function = None
         self.train_summary = None
+        self.accuracy = None
 
     def create_loss_function(self):
         self.last_layer = self.layers_structures[-1].layers[-1]
@@ -35,10 +36,10 @@ class DefaultTrainer(object):
                     correct_prediction = tf.equal(tf.argmax(self.output_last_layer, 1),
                                                   tf.argmax(self.desired_output, 1))
                 with tf.name_scope('accuracy'):
-                    accuracy = tf.reduce_mean(tf.cast(correct_prediction, tf.float32))
+                    self.accuracy = tf.reduce_mean(tf.cast(correct_prediction, tf.float32))
 
                 self.train_summary = tf.summary.merge([tf.summary.scalar('loss', self.loss_function),
-                                                       tf.summary.scalar('accuracy', accuracy)])
+                                                       tf.summary.scalar('accuracy', self.accuracy)])
         var_list = list()
         for layers_str in self.layers_structures:
             for layer in layers_str.layers:
