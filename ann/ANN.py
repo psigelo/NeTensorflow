@@ -1,16 +1,16 @@
 import datetime
-
 import os
-
 import random
-import tensorflow as tf
+import uuid
 
+import tensorflow as tf
 from ann.macro_layer.layer_structure.LayerStructure import LayerType
+
 from ann.macro_layer.layer_structure.layers.TranslatorLayerImage2OneDimension import TranslatorLayerImage2OneDimesion
 
 
 class ANN(object):
-    def __init__(self, macro_layers=None, tf_session=None, base_folder='.', trainer_list=[]):
+    def __init__(self, macro_layers=None, tf_session=None, base_folder='.', trainer_list=list(), id=None):
         self.macro_layers = macro_layers
         self.tf_session = tf_session
         self.last_layer = None
@@ -20,6 +20,13 @@ class ANN(object):
         self.tf_summaries_ann = None
         self.base_folder = base_folder
         self.trainer_list = trainer_list
+        self.saver = None
+        self.time_stamp = None
+        self.best_accuracy = 0.0
+        if id is None:
+            self.id = self.uuid = uuid.uuid4().hex
+        else:
+            self.id = id
 
     def connect_and_initialize(self):
         self.connect()
@@ -52,22 +59,23 @@ class ANN(object):
 
         self.last_layer = layers_refs[-1]
         self.first_layer = layers_refs[0]
-        time_stamp = '{:%Y%m%d%H%M%S}'.format(datetime.datetime.now())
-        print("TimeStamp used: ", time_stamp)
+        self.time_stamp = '{:%Y%m%d%H%M%S}'.format(datetime.datetime.now())
+        print("TimeStamp used: ", self.time_stamp)
 
         for trainer in self.trainer_list:  # Must do it before writers
             trainer.create_loss_function()
 
         self.train_writer = \
-            tf.summary.FileWriter(os.path.join(self.base_folder, time_stamp,  'train'), self.tf_session.graph)
+            tf.summary.FileWriter(os.path.join(self.base_folder, self.time_stamp,  'train'), self.tf_session.graph)
         self.run_writer = \
-            tf.summary.FileWriter(os.path.join(self.base_folder, time_stamp, 'run'), self.tf_session.graph)
+            tf.summary.FileWriter(os.path.join(self.base_folder, self.time_stamp, 'run'), self.tf_session.graph)
 
         summaries = list()
         for layers_structures in self.macro_layers.layers_structure_list:
                 for layer in layers_structures.layers:
                     summaries += layer.summaries
         self.tf_summaries_ann = tf.summary.merge(summaries)
+        self.saver = tf.train.Saver(max_to_keep=None)
 
     def initialize(self):
         self.tf_session.run(tf.global_variables_initializer())
@@ -94,7 +102,8 @@ class ANN(object):
 
         return result
 
-    def train_step(self,input_tensor_value, output_desired, global_iteration,  write_summaries=True, trainers=None):
+    def train_step(self, input_tensor_value, output_desired, global_iteration,  write_summaries=True, trainers=None,
+                   verbose=True):
         for trainer in self.trainer_list:
             if trainers is not None:
                 if trainer.uuid not in list(map(lambda x: x.uuid, trainers)):
@@ -107,15 +116,36 @@ class ANN(object):
                 if random.random() < 0.01:
                     run_options = tf.RunOptions(trace_level=tf.RunOptions.FULL_TRACE)
                     run_metadata = tf.RunMetadata()
-                summaries_ann, summaries_train, _ = self.tf_session.run([self.tf_summaries_ann, trainer.train_summary,
-                                                                         trainer.train_step],
+                summ_ann, summ_train, _, accuracy = self.tf_session.run([self.tf_summaries_ann, trainer.train_summary,
+                                                                         trainer.train_step, trainer.accuracy],
                                                                         feed_dict={input_tensor: input_tensor_value,
                                                                                    desired_output: output_desired},
                                                                         options=run_options, run_metadata=run_metadata)
+                if accuracy > self.best_accuracy:
+                    self.best_accuracy = accuracy
+                    if verbose:
+                        print("New accuracy obtained: ", self.best_accuracy)
+                        self.save(check_point_iteration=True, iteration=global_iteration)
                 if run_metadata is not None:
                     self.train_writer.add_run_metadata(run_metadata, 'step%d' % global_iteration)
-                self.train_writer.add_summary(summaries_ann, global_iteration)
-                self.train_writer.add_summary(summaries_train, global_iteration)
+                self.train_writer.add_summary(summ_ann, global_iteration)
+                self.train_writer.add_summary(summ_train, global_iteration)
             else:
-                self.tf_session.run( trainer.train_step, feed_dict={input_tensor: input_tensor_value,
-                                                                    desired_output: output_desired})
+                self.tf_session.run(trainer.train_step, feed_dict={input_tensor: input_tensor_value,
+                                                                   desired_output: output_desired})
+
+    def save(self, check_point_iteration=False, iteration=None):
+        save_base_folder = os.path.join(os.path.join(self.base_folder, self.time_stamp), 'ANN_STORE_checkpoint')
+        ann_folder = os.path.join(save_base_folder, self.id)
+        if not os.path.exists(save_base_folder):
+            os.mkdir(save_base_folder)
+        if not os.path.exists(ann_folder):
+            os.mkdir(ann_folder)
+        if check_point_iteration:
+            path  = os.path.join(save_base_folder, self.id + '_it_' + str(iteration))
+            print ("Saved path: ", path)
+            self.saver.save(self.tf_session, path)
+        else:
+            path = os.path.join(save_base_folder, self.id)
+            print("Saved path: ", path)
+            self.saver.save(path)
