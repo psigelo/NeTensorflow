@@ -1,5 +1,5 @@
-import tensorflow as tf
 import numpy as np
+import tensorflow as tf
 
 from ann.macro_layer.layer_structure.layers.ConvolutionalLayer import ConvolutionalLayer
 
@@ -8,14 +8,15 @@ class ConvolutionalLayerWithPoolMax2x2(ConvolutionalLayer):
     def __init__(self, height_patch, width_patch, filters_amount, strides, padding='SAME', max_pool_padding='SAME'):
         super(ConvolutionalLayerWithPoolMax2x2, self).__init__(
             height_patch, width_patch, filters_amount, strides, padding)
+        self.__max_pool_padding = None
+        self.__pool_output = None
         self.max_pool_padding = max_pool_padding
-        self.pool_output = None
 
     def connect_layer(self, prev_layer, input_tensor):
         with tf.name_scope('PoolMax2x2'):
             super(ConvolutionalLayerWithPoolMax2x2, self).connect_layer(prev_layer, input_tensor)
             self.pool_output = tf.nn.max_pool(self.output, ksize=[1, 2, 2, 1],
-                            strides=[1, 2, 2, 1], padding=self.max_pool_padding)
+                                              strides=[1, 2, 2, 1], padding=self.max_pool_padding)
 
     def get_tensor(self):
         if self.pool_output is not None:
@@ -31,3 +32,21 @@ class ConvolutionalLayerWithPoolMax2x2(ConvolutionalLayer):
             self.width_image = np.int64(prev_layer.width_image / 2)
         else:
             raise Exception('padding name not supported')
+
+    @property
+    def max_pool_padding(self):
+        return self.__max_pool_padding
+
+    @max_pool_padding.setter
+    def max_pool_padding(self, max_pool_padding):
+        self.__max_pool_padding = max_pool_padding
+        self.save_and_restore_dictionary['max_pool_padding'] = self.__max_pool_padding
+
+    @property
+    def pool_output(self):
+        return self.__max_pool_padding
+
+    @pool_output.setter
+    def pool_output(self, pool_output):
+        self.__pool_output = pool_output
+        self.save_and_restore_dictionary['pool_output'] = self.__pool_output
