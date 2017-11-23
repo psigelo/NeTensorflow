@@ -5,15 +5,16 @@ from ann.macro_layer.layer_structure.LayerStructure import LayerType
 
 class InputLayer(object):
     def __init__(self, inputs_dimension, dataset_dimension=None):
-        self.inputs_amount = None
-        self.filters_amount = None
-        self.height_patch = None
-        self.width_patch = None
-        self.layer_type = None
-        self.height_image = None
-        self.width_image = None
-        self.layer_structure_name = None
-        self.summaries = list()
+        self.save_and_restore_dictionary = dict()
+        self.__inputs_amount = None
+        self.__filters_amount = None
+        self.__height_patch = None
+        self.__width_patch = None
+        self.__layer_type = None
+        self.__height_image = None
+        self.__width_image = None
+        self.__layer_structure_name = None
+        self.__summaries = list()
 
         if len(inputs_dimension) == 4:
             self.layer_type = LayerType.IMAGE
@@ -47,3 +48,84 @@ class InputLayer(object):
 
     def get_input_tensor(self):
         return self.inputs
+
+    @property
+    def inputs_amount(self):
+        return self.__inputs_amount
+
+    @inputs_amount.setter
+    def inputs_amount(self, inputs_amount):
+        self.__inputs_amount = inputs_amount
+        self.save_and_restore_dictionary['inputs_amount'] = self.__inputs_amount
+
+    @property
+    def filters_amount(self):
+        return self.__filters_amount
+
+    @filters_amount.setter
+    def filters_amount(self, filters_amount):
+        self.__filters_amount = filters_amount
+        self.save_and_restore_dictionary['filters_amount'] = self.__filters_amount
+
+    @property
+    def height_patch(self):
+        return self.__height_patch
+
+    @height_patch.setter
+    def height_patch(self, height_patch):
+        self.__height_patch = height_patch
+        self.save_and_restore_dictionary['height_patch'] = self.__height_patch
+
+    @property
+    def width_patch(self):
+        return self.__width_patch
+
+    @width_patch.setter
+    def width_patch(self, width_patch):
+        self.__width_patch = width_patch
+        self.save_and_restore_dictionary['width_patch'] = self.__width_patch
+
+    @property
+    def layer_type(self):
+        return self.__layer_type
+
+    @layer_type.setter
+    def layer_type(self, layer_type):
+        self.__layer_type = layer_type
+        self.save_and_restore_dictionary['layer_type'] = self.__layer_type
+
+    @property
+    def height_image(self):
+        return self.__height_image
+
+    @height_image.setter
+    def height_image(self, height_image):
+        self.__height_image = height_image
+        self.save_and_restore_dictionary['height_image'] = self.__height_image
+
+    @property
+    def width_image(self):
+        return self.__width_image
+
+    @width_image.setter
+    def width_image(self, width_image):
+        self.__width_image = width_image
+        self.save_and_restore_dictionary['width_image'] = self.__width_image
+
+    @property
+    def layer_structure_name(self):
+        return self.__layer_structure_name
+
+    @layer_structure_name.setter
+    def layer_structure_name(self, layer_structure_name):
+        self.__layer_structure_name = layer_structure_name
+        self.save_and_restore_dictionary['layer_structure_name'] = self.__layer_structure_name
+
+    @property
+    def summaries(self):
+        return self.__summaries
+
+    @summaries.setter
+    def summaries(self, summaries):
+        self.__summaries = summaries
+        self.save_and_restore_dictionary['summaries'] = self.__summaries
