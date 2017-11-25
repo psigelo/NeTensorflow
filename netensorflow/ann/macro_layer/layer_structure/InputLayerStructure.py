@@ -22,8 +22,7 @@ class InputLayerStructure(LayerStructure):
             self.layer_type = LayerType.ONE_DIMENSION
         else:
             raise Exception('LayerType can not be deduced')
-        super(InputLayerStructure, self).__init__(layer_structure_name=layer_structure_name, position=0,
-                                                  layer_type=self.layer_type)
+        super(InputLayerStructure, self).__init__(layer_structure_name=layer_structure_name, layer_type=self.layer_type)
         self.layers = [InputLayer(input_dimension, dataset_dimension)]
 
         # check all layers have same layer type

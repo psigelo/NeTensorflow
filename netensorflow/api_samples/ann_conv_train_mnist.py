@@ -36,13 +36,10 @@ def main():
 
     # Layer Structures
     input_layer_structure = InputLayerStructure(input_dim, dataset_dimension)
-    features_layer_structure = LayerStructure('Features', position=0,
-                                              layer_type=LayerType.IMAGE, layers=[convolutional_pool_layer_1,
-                                                                                  convolutional_pool_layer_2])
-    logic_layer_structure = LayerStructure('Logic', position=1,
-                                           layer_type=LayerType.ONE_DIMENSION, layers=[logic_layer])
-    output_layer_structure = LayerStructure('Output', position=2,
-                                            layer_type=LayerType.ONE_DIMENSION, layers=[out_layer])
+    features_layer_structure = LayerStructure('Features', layer_type=LayerType.IMAGE,
+                                              layers=[convolutional_pool_layer_1, convolutional_pool_layer_2])
+    logic_layer_structure = LayerStructure('Logic', layer_type=LayerType.ONE_DIMENSION, layers=[logic_layer])
+    output_layer_structure = LayerStructure('Output', layer_type=LayerType.ONE_DIMENSION, layers=[out_layer])
 
     # Macro Layer
     macro_layers = MacroLayer(layers_structure=[input_layer_structure, features_layer_structure,

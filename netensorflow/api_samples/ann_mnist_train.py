@@ -31,10 +31,8 @@ def main():
 
     # Layer Structures
     input_layer_structure = InputLayerStructure(input_dim)
-    hidden_layer_structure = LayerStructure('Hidden', position=0,
-                                            layer_type=LayerType.ONE_DIMENSION, layers=[hidden_layer])
-    output_layer_structure = LayerStructure('Output', position=1,
-                                            layer_type=LayerType.ONE_DIMENSION, layers=[out_layer])
+    hidden_layer_structure = LayerStructure('Hidden', layer_type=LayerType.ONE_DIMENSION, layers=[hidden_layer])
+    output_layer_structure = LayerStructure('Output',  layer_type=LayerType.ONE_DIMENSION, layers=[out_layer])
 
     # Macro Layer
     macro_layers = MacroLayer(layers_structure=[input_layer_structure, hidden_layer_structure, output_layer_structure])
