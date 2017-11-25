@@ -4,9 +4,11 @@ import tensorflow as tf
 import uuid
 import os
 
+from netensorflow.ann.ANNGlobals import register_netensorflow_class
 from netensorflow.ann.macro_layer.layer_structure.layers.ConvolutionalLayer import ConvolutionalLayer
 
 
+@register_netensorflow_class
 class ConvolutionalLayerWithPoolMax2x2(ConvolutionalLayer):
     def __init__(self, height_patch, width_patch, filters_amount, strides, padding='SAME', max_pool_padding='SAME'):
         self.name = self.__class__.__name__ + '_uuid_' + uuid.uuid4().hex

@@ -1,5 +1,5 @@
-NEURON_LAYER_REGISTERED = list()
+NETENSORFLOW_CLASSES = list()
 
 
-def register_neuron_layer(class_to_append):
-    NEURON_LAYER_REGISTERED.append(class_to_append.__name__)
+def register_netensorflow_class(class_to_append):
+    NETENSORFLOW_CLASSES.append(class_to_append.__name__)

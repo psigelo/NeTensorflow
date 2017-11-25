@@ -4,9 +4,11 @@ import os
 import tensorflow as tf
 import uuid
 
+from netensorflow.ann.ANNGlobals import register_netensorflow_class
 from netensorflow.ann.macro_layer.layer_structure.LayerStructure import LayerTypeToString
 
 
+@register_netensorflow_class
 class SoftmaxLayer(object):
     def __init__(self):
         self.name = self.__class__.__name__ + '_uuid_' + uuid.uuid4().hex

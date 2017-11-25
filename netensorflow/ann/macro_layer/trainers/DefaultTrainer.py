@@ -1,7 +1,10 @@
 import tensorflow as tf
 import uuid
 
+from netensorflow.ann.ANNGlobals import register_netensorflow_class
 
+
+@register_netensorflow_class
 class DefaultTrainer(object):
     def __init__(self, layers_structures=None, name='DefaultTrainer'):
         self.uuid = uuid.uuid4().hex

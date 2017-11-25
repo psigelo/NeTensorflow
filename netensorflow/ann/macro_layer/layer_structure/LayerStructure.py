@@ -7,6 +7,8 @@ import uuid
 
 import json
 
+from netensorflow.ann.ANNGlobals import register_netensorflow_class
+
 
 class LayerType(Enum):
     ONE_DIMENSION = 1
@@ -17,6 +19,7 @@ LayerTypeToString = {LayerType.ONE_DIMENSION: 'ONE_DIMENSION', LayerType.IMAGE: 
 StringToLayerType = {'ONE_DIMENSION': LayerType.ONE_DIMENSION, 'IMAGE': LayerType.IMAGE}
 
 
+@register_netensorflow_class
 class LayerStructure(object):
     def __init__(self, layer_structure_name, position, layer_type, layers=None):
         self.name = self.__class__.__name__ + '_uuid_' + uuid.uuid4().hex

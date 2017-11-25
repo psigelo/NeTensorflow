@@ -4,11 +4,13 @@ import json
 
 import uuid
 
+from netensorflow.ann.ANNGlobals import register_netensorflow_class
 from netensorflow.ann.macro_layer.layer_structure.layers.InputLayer import InputLayer
 
 from netensorflow.ann.macro_layer.layer_structure.LayerStructure import LayerStructure, LayerType
 
 
+@register_netensorflow_class
 class InputLayerStructure(LayerStructure):
     def __init__(self, input_dimension, dataset_dimension=None, layer_structure_name="InputLayer"):
         self.name = self.__class__.__name__ + '_uuid_' + uuid.uuid4().hex
