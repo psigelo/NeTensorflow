@@ -10,7 +10,7 @@ from tensorflow.python.saved_model import tag_constants
 from netensorflow.ann.macro_layer.layer_structure.LayerStructure import LayerType
 
 from netensorflow.ann.macro_layer.layer_structure.layers.TranslatorLayerImage2OneDimension import   \
-    TranslatorLayerImage2OneDimesion
+    TranslatorLayerImage2OneDimension
 
 
 class ANN(object):
@@ -47,7 +47,7 @@ class ANN(object):
                     if layer.layer_type != prev_layer.layer_type:
                         if (prev_layer.layer_type == LayerType.IMAGE) \
                                 and (layer.layer_type == LayerType.ONE_DIMENSION):
-                            layer_structures.add_layer_at_bottom(TranslatorLayerImage2OneDimesion())
+                            layer_structures.add_layer_at_bottom(TranslatorLayerImage2OneDimension())
                         else:
                             raise Exception('CaseNotDefined')
                 prev_layer = layer

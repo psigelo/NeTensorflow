@@ -3,7 +3,7 @@ import tensorflow as tf
 from netensorflow.ann.macro_layer.layer_structure.LayerStructure import LayerType
 
 
-class TranslatorLayerImage2OneDimesion(object):
+class TranslatorLayerImage2OneDimension(object):
     def __init__(self):
         self.save_and_restore_dictionary = dict()
         self.__inputs_amount = None
@@ -22,7 +22,7 @@ class TranslatorLayerImage2OneDimesion(object):
             raise Exception('PrevLayerMustBeTypeImage')
 
         self.inputs_amount = prev_layer.height_image * prev_layer.width_image * prev_layer.filters_amount
-        with tf.name_scope('TranslatorLayerImage2OneDimesion'):
+        with tf.name_scope('TranslatorLayerImage2OneDimension'):
             self.output = tf.reshape(input_tensor, [-1, self.inputs_amount])
 
     @property
