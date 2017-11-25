@@ -20,28 +20,36 @@ class InputLayer(object):
         self.__width_image = None
         self.__layer_structure_name = None
         self.__summaries = list()
+        self.__inputs = None
+        self.__input_reshaped = None
 
-        if len(inputs_dimension) == 4:
-            self.layer_type = LayerType.IMAGE
-            self.filters_amount = inputs_dimension[3]
-            self.height_image = inputs_dimension[1]
-            self.width_image = inputs_dimension[2]
-        elif len(inputs_dimension) == 2:
-            self.layer_type = LayerType.ONE_DIMENSION
-            self.inputs_amount = inputs_dimension[1]
-        else:
-            raise Exception('layer_type not supported')
+        if not restore:
+            if len(inputs_dimension) == 4:
+                self.layer_type = LayerType.IMAGE
+                self.filters_amount = inputs_dimension[3]
+                self.height_image = inputs_dimension[1]
+                self.width_image = inputs_dimension[2]
+            elif len(inputs_dimension) == 2:
+                self.layer_type = LayerType.ONE_DIMENSION
+                self.inputs_amount = inputs_dimension[1]
+            else:
+                raise Exception('layer_type not supported')
 
-        dimension = dataset_dimension if dataset_dimension is not None else inputs_dimension
-        with tf.name_scope('InputLayer'):
-            self.inputs = tf.placeholder(tf.float32, dimension)
-            self.input_reshaped = self.inputs
-            if self.layer_type == LayerType.IMAGE:
-                self.input_reshaped = tf.reshape(self.inputs,
-                                                 [-1, self.height_image, self.width_image, self.filters_amount])
+            dimension = dataset_dimension if dataset_dimension is not None else inputs_dimension
+            with tf.name_scope('InputLayer'):
+                self.inputs = tf.placeholder(tf.float32, dimension)
+                self.input_reshaped = self.inputs
+                if self.layer_type == LayerType.IMAGE:
+                    self.input_reshaped = tf.reshape(self.inputs,
+                                                     [-1, self.height_image, self.width_image, self.filters_amount])
 
     def get_tensor(self):
         return self.input_reshaped
+
+    def save_netensorflow_model(self, path):
+        layer_path = os.path.join(path, self.name)
+        with open(layer_path + 'data.json', 'w') as fp:
+            json.dump(self.save_and_restore_dictionary, fp)
 
     @staticmethod
     def connect_layer(_):
