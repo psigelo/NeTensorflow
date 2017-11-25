@@ -66,7 +66,7 @@ class ConvolutionalLayer(object):
 
     def save_netensorflow_model(self, path):
         layer_path = os.path.join(path, self.name)
-        with open(layer_path + 'data.json', 'w') as fp:
+        with open(layer_path + '_data.json', 'w') as fp:
             json.dump(self.save_and_restore_dictionary, fp)
 
     @property

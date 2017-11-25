@@ -177,7 +177,7 @@ class ANN(object):
         store_dict['layers_structures'] = [(ls.name, ls.__class__.__name__)
                                            for ls in self.macro_layers.layers_structure_list]
 
-        with open(ann_path + 'data.json', 'w') as fp:
+        with open(ann_path + '_data.json', 'w') as fp:
             json.dump(store_dict, fp)
 
         for layer_structure in self.macro_layers.layers_structure_list:

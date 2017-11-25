@@ -77,7 +77,7 @@ class LayerStructure(object):
         store_dict = dict()
         store_dict['layers'] = [(ls.name, ls.__class__.__name__) for ls in self.layers]
 
-        with open(layer_structure_path + 'data.json', 'w') as fp:
+        with open(layer_structure_path + '_data.json', 'w') as fp:
             json.dump(store_dict, fp)
 
         for layer in self.layers:
