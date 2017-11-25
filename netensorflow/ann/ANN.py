@@ -4,6 +4,8 @@ import random
 import uuid
 
 import tensorflow as tf
+from tensorflow.python.saved_model import tag_constants
+
 from netensorflow.ann.macro_layer.layer_structure.LayerStructure import LayerType
 
 from netensorflow.ann.macro_layer.layer_structure.layers.TranslatorLayerImage2OneDimension import   \
@@ -126,7 +128,11 @@ class ANN(object):
                     self.best_accuracy = accuracy
                     if verbose:
                         print("New accuracy obtained: ", self.best_accuracy)
-                        self.save(check_point_iteration=True, iteration=global_iteration)
+                        if not self.model_is_saved:
+                            self.model_is_saved = True
+                            self.save(check_point_iteration=True, iteration=global_iteration, save_model=True)
+                        else:
+                            self.save(check_point_iteration=True, iteration=global_iteration)
                 if run_metadata is not None:
                     self.train_writer.add_run_metadata(run_metadata, 'step%d' % global_iteration)
                 self.train_writer.add_summary(summ_ann, global_iteration)
@@ -135,9 +141,19 @@ class ANN(object):
                 self.tf_session.run(trainer.train_step, feed_dict={input_tensor: input_tensor_value,
                                                                    desired_output: output_desired})
 
-    def save(self, check_point_iteration=False, iteration=None):
+    def save(self, check_point_iteration=False, iteration=None, save_model=False):
         save_base_folder = os.path.join(os.path.join(self.base_folder, self.time_stamp), 'ANN_STORE_checkpoint')
         ann_folder = os.path.join(save_base_folder, self.id)
+        if save_model:
+            # Saving the tensorflow Model through the SavedModel builder
+            saved_model_path = ann_folder + self.id + '_model_'
+            nt_saved_model_path = ann_folder + self.id + '_netensorflow_'
+            builder = tf.saved_model.builder.SavedModelBuilder(saved_model_path)
+            builder.add_meta_graph_and_variables(self.tf_session, [tag_constants.TRAINING])
+            builder.save()
+            # Now saving the netensorflow ann structure, to be available to load all needed in future
+            self.save_netensorflow_model(nt_saved_model_path)
+
         if not os.path.exists(save_base_folder):
             os.mkdir(save_base_folder)
         if not os.path.exists(ann_folder):
