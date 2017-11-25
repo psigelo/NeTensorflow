@@ -7,6 +7,7 @@ import json
 import tensorflow as tf
 from tensorflow.python.saved_model import tag_constants
 
+from netensorflow.ann.ANNGlobals import NETENSORFLOW_CLASSES
 from netensorflow.ann.macro_layer.layer_structure.LayerStructure import LayerType
 
 from netensorflow.ann.macro_layer.layer_structure.layers.TranslatorLayerImage2OneDimension import   \
