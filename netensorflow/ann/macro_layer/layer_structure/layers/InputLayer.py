@@ -1,10 +1,15 @@
-import tensorflow as tf
+import os
 
-from netensorflow.ann.macro_layer.layer_structure.LayerStructure import LayerType
+import json
+import tensorflow as tf
+import uuid
+
+from netensorflow.ann.macro_layer.layer_structure.LayerStructure import LayerType, LayerTypeToString
 
 
 class InputLayer(object):
-    def __init__(self, inputs_dimension, dataset_dimension=None):
+    def __init__(self, inputs_dimension, dataset_dimension=None, restore=False):
+        self.name = self.__class__.__name__ + '_uuid_' + uuid.uuid4().hex
         self.save_and_restore_dictionary = dict()
         self.__inputs_amount = None
         self.__filters_amount = None
@@ -92,7 +97,7 @@ class InputLayer(object):
     @layer_type.setter
     def layer_type(self, layer_type):
         self.__layer_type = layer_type
-        self.save_and_restore_dictionary['layer_type'] = self.__layer_type
+        self.save_and_restore_dictionary['layer_type'] = LayerTypeToString[self.__layer_type]
 
     @property
     def height_image(self):
@@ -128,4 +133,22 @@ class InputLayer(object):
     @summaries.setter
     def summaries(self, summaries):
         self.__summaries = summaries
-        self.save_and_restore_dictionary['summaries'] = self.__summaries
+        self.save_and_restore_dictionary['summaries'] = [summary.name for summary in self.__summaries]
+
+    @property
+    def inputs(self):
+        return self.__inputs
+
+    @inputs.setter
+    def inputs(self, inputs):
+        self.__inputs = inputs
+        self.save_and_restore_dictionary['inputs'] = self.__inputs.name
+
+    @property
+    def input_reshaped(self):
+        return self.__input_reshaped
+
+    @input_reshaped.setter
+    def input_reshaped(self, input_reshaped):
+        self.__input_reshaped = input_reshaped
+        self.save_and_restore_dictionary['input_reshaped'] = self.__input_reshaped.name

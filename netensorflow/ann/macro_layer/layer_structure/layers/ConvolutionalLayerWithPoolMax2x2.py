@@ -1,11 +1,15 @@
+import json
 import numpy as np
 import tensorflow as tf
+import uuid
+import os
 
 from netensorflow.ann.macro_layer.layer_structure.layers.ConvolutionalLayer import ConvolutionalLayer
 
 
 class ConvolutionalLayerWithPoolMax2x2(ConvolutionalLayer):
     def __init__(self, height_patch, width_patch, filters_amount, strides, padding='SAME', max_pool_padding='SAME'):
+        self.name = self.__class__.__name__ + '_uuid_' + uuid.uuid4().hex
         super(ConvolutionalLayerWithPoolMax2x2, self).__init__(
             height_patch, width_patch, filters_amount, strides, padding)
         self.__max_pool_padding = None
@@ -28,10 +32,15 @@ class ConvolutionalLayerWithPoolMax2x2(ConvolutionalLayer):
         if self.padding == 'VALID':
             raise Exception('Case not implemented')  # ToDo: create a algorithm to calc h and w in padding=VALID case
         elif self.padding == 'SAME':
-            self.height_image = np.int64(prev_layer.height_image / 2)
-            self.width_image = np.int64(prev_layer.width_image / 2)
+            self.height_image = np.int(prev_layer.height_image / 2)
+            self.width_image = np.int(prev_layer.width_image / 2)
         else:
             raise Exception('padding name not supported')
+
+    def save_netensorflow_model(self, path):
+        layer_path = os.path.join(path, self.name)
+        with open(layer_path + 'data.json', 'w') as fp:
+            json.dump(self.save_and_restore_dictionary, fp)
 
     @property
     def max_pool_padding(self):
@@ -49,4 +58,4 @@ class ConvolutionalLayerWithPoolMax2x2(ConvolutionalLayer):
     @pool_output.setter
     def pool_output(self, pool_output):
         self.__pool_output = pool_output
-        self.save_and_restore_dictionary['pool_output'] = self.__pool_output
+        self.save_and_restore_dictionary['pool_output'] = self.__pool_output.name

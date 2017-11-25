@@ -1,10 +1,15 @@
+import json
+
+import os
 import tensorflow as tf
+import uuid
 
 from netensorflow.ann.macro_layer.layer_structure.LayerStructure import LayerType
 
 
 class TranslatorLayerImage2OneDimension(object):
     def __init__(self):
+        self.name = self.__class__.__name__ + '_uuid_' + uuid.uuid4().hex
         self.save_and_restore_dictionary = dict()
         self.__inputs_amount = None
         self.__output = None
@@ -25,6 +30,11 @@ class TranslatorLayerImage2OneDimension(object):
         with tf.name_scope('TranslatorLayerImage2OneDimension'):
             self.output = tf.reshape(input_tensor, [-1, self.inputs_amount])
 
+    def save_netensorflow_model(self, path):
+        layer_path = os.path.join(path, self.name)
+        with open(layer_path + 'data.json', 'w') as fp:
+            json.dump(self.save_and_restore_dictionary, fp)
+
     @property
     def layer_variables(self):
         return list()
@@ -36,7 +46,7 @@ class TranslatorLayerImage2OneDimension(object):
     @output.setter
     def output(self, output):
         self.__output = output
-        self.save_and_restore_dictionary['output'] = self.__output
+        self.save_and_restore_dictionary['output'] = self.__output.name
 
     @property
     def inputs_amount(self):
@@ -54,7 +64,7 @@ class TranslatorLayerImage2OneDimension(object):
     @summaries.setter
     def summaries(self, summaries):
         self.__summaries = summaries
-        self.save_and_restore_dictionary['summaries'] = self.__summaries
+        self.save_and_restore_dictionary['summaries'] = [summary.name for summary in self.__summaries]
 
     @property
     def layer_structure_name(self):

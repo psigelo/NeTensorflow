@@ -1,10 +1,16 @@
-import tensorflow as tf
+import os
 
+import json
+import tensorflow as tf
+import uuid
+
+from netensorflow.ann.macro_layer.layer_structure.LayerStructure import LayerTypeToString
 from netensorflow.ann.tensorflow_tools.variable_summaries import variable_summaries
 
 
 class ConvolutionalLayer(object):
     def __init__(self, height_patch, width_patch, filters_amount, strides, padding='SAME'):
+        self.name = self.__class__.__name__ + '_uuid_' + uuid.uuid4().hex
         self.save_and_restore_dictionary = dict()
         self.__prev_layer_inputs_amount = None  # must be a list of len 4 [N, H, W, C]
         self.__layer_input_amount = None  # must be a list of len 4 [N, H, W, C]
@@ -56,6 +62,11 @@ class ConvolutionalLayer(object):
         else:
             raise Exception('padding name not supported')
 
+    def save_netensorflow_model(self, path):
+        layer_path = os.path.join(path, self.name)
+        with open(layer_path + 'data.json', 'w') as fp:
+            json.dump(self.save_and_restore_dictionary, fp)
+
     @property
     def layer_variables(self):
         return [self.__weights, self.__bias]
@@ -85,7 +96,7 @@ class ConvolutionalLayer(object):
     @output.setter
     def output(self, output):
         self.__output = output
-        self.save_and_restore_dictionary['output'] = self.__output
+        self.save_and_restore_dictionary['output'] = self.__output.name
 
     @property
     def strides(self):
@@ -112,7 +123,7 @@ class ConvolutionalLayer(object):
     @weights.setter
     def weights(self, weights):
         self.__weights = weights
-        self.save_and_restore_dictionary['weights'] = self.__weights
+        self.save_and_restore_dictionary['weights'] = self.__weights.name
 
     @property
     def bias(self):
@@ -121,7 +132,7 @@ class ConvolutionalLayer(object):
     @bias.setter
     def bias(self, bias):
         self.__bias = bias
-        self.save_and_restore_dictionary['bias'] = self.__bias
+        self.save_and_restore_dictionary['bias'] = self.__bias.name
 
     @property
     def height_patch(self):
@@ -157,7 +168,7 @@ class ConvolutionalLayer(object):
     @layer_type.setter
     def layer_type(self, layer_type):
         self.__layer_type = layer_type
-        self.save_and_restore_dictionary['layer_type'] = self.__layer_type
+        self.save_and_restore_dictionary['layer_type'] = LayerTypeToString[self.__layer_type]
 
     @property
     def height_image(self):
@@ -193,4 +204,4 @@ class ConvolutionalLayer(object):
     @summaries.setter
     def summaries(self, summaries):
         self.__summaries = summaries
-        self.save_and_restore_dictionary['summaries'] = self.__summaries
+        self.save_and_restore_dictionary['summaries'] = [summary.name for summary in self.__summaries]

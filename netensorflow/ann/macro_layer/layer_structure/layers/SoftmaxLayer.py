@@ -1,8 +1,15 @@
+import json
+
+import os
 import tensorflow as tf
+import uuid
+
+from netensorflow.ann.macro_layer.layer_structure.LayerStructure import LayerTypeToString
 
 
 class SoftmaxLayer(object):
     def __init__(self):
+        self.name = self.__class__.__name__ + '_uuid_' + uuid.uuid4().hex
         self.save_and_restore_dictionary = dict()
         self.__output = None
         self.__inputs_amount = None
@@ -19,6 +26,11 @@ class SoftmaxLayer(object):
         self.output = tf.nn.softmax(input_tensor)
         self.inputs_amount = prev_layer.inputs_amount
 
+    def save_netensorflow_model(self, path):
+        layer_path = os.path.join(path, self.name)
+        with open(layer_path + 'data.json', 'w') as fp:
+            json.dump(self.save_and_restore_dictionary, fp)
+
     @property
     def layer_variables(self):
         return list()
@@ -34,7 +46,7 @@ class SoftmaxLayer(object):
     @output.setter
     def output(self, output):
         self.__output = output
-        self.save_and_restore_dictionary['output'] = self.__output
+        self.save_and_restore_dictionary['output'] = self.__output.name
 
     @property
     def inputs_amount(self):
@@ -52,7 +64,7 @@ class SoftmaxLayer(object):
     @layer_type.setter
     def layer_type(self, layer_type):
         self.__layer_type = layer_type
-        self.save_and_restore_dictionary['layer_type'] = self.__layer_type
+        self.save_and_restore_dictionary['layer_type'] = LayerTypeToString[self.__layer_type]
 
     @property
     def layer_structure_name(self):

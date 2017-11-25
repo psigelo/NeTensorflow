@@ -1,10 +1,16 @@
-import tensorflow as tf
+import os
 
+import json
+import tensorflow as tf
+import uuid
+
+from netensorflow.ann.macro_layer.layer_structure.LayerStructure import LayerTypeToString
 from netensorflow.ann.tensorflow_tools.variable_summaries import variable_summaries
 
 
 class FullConnected(object):
     def __init__(self, inputs_amount=None):
+        self.name = self.__class__.__name__ + '_uuid_' + uuid.uuid4().hex
         self.save_and_restore_dictionary = dict()
         self.__inputs_amount = None
         self.__output = None
@@ -35,6 +41,11 @@ class FullConnected(object):
         self.save_and_restore_dictionary.update({'weight': self.weights.name, 'bias': self.bias.name,
                                                  'summaries': list(map(lambda s: s.name, self.summaries))})
 
+    def save_netensorflow_model(self, path):
+        layer_path = os.path.join(path, self.name)
+        with open(layer_path + 'data.json', 'w') as fp:
+            json.dump(self.save_and_restore_dictionary, fp)
+
     @property
     def layer_variables(self):
         return [self.__weights, self.__bias]
@@ -46,7 +57,7 @@ class FullConnected(object):
     @layer_structure_name.setter
     def layer_structure_name(self, layer_structure_name):
         self.__layer_structure_name = layer_structure_name
-        self.save_and_restore_dictionary['layer_structure_name'] = self.__layer_type
+        self.save_and_restore_dictionary['layer_structure_name'] = self.__layer_structure_name
 
     @property
     def weights(self):
@@ -55,7 +66,7 @@ class FullConnected(object):
     @weights.setter
     def weights(self, weight):
         self.__weights = weight
-        self.save_and_restore_dictionary['weights'] = self.__weights
+        self.save_and_restore_dictionary['weights'] = self.__weights.name
 
     @property
     def summaries(self):
@@ -64,7 +75,7 @@ class FullConnected(object):
     @summaries.setter
     def summaries(self, summaries):
         self.__summaries = summaries
-        self.save_and_restore_dictionary['summaries'] = self.__summaries
+        self.save_and_restore_dictionary['summaries'] = [summary.name for summary in self.__summaries]
 
     @property
     def bias(self):
@@ -73,7 +84,7 @@ class FullConnected(object):
     @bias.setter
     def bias(self, bias):
         self.__bias = bias
-        self.save_and_restore_dictionary['bias'] = self.__bias
+        self.save_and_restore_dictionary['bias'] = self.__bias.name
 
     @property
     def inputs_amount(self):
@@ -91,7 +102,7 @@ class FullConnected(object):
     @layer_type.setter
     def layer_type(self, layer_name):
         self.__layer_type = layer_name
-        self.save_and_restore_dictionary['layer_name'] = self.__layer_type
+        self.save_and_restore_dictionary['layer_name'] = LayerTypeToString[self.__layer_type]
 
     @property
     def output(self):
@@ -100,7 +111,7 @@ class FullConnected(object):
     @output.setter
     def output(self, output):
         self.__output = output
-        self.save_and_restore_dictionary['output'] = self.__output
+        self.save_and_restore_dictionary['output'] = self.__output.name
 
     def restore(self, save_and_restore_dictionary):
         self.save_and_restore_dictionary = save_and_restore_dictionary
