@@ -14,7 +14,7 @@ from netensorflow.ann.macro_layer.layer_structure.layers.TranslatorLayerImage2On
 
 
 class ANN(object):
-    def __init__(self, macro_layers=None, tf_session=None, base_folder='.', trainer_list=list(), id=None):
+    def __init__(self, macro_layers=None, tf_session=None, base_folder='.', trainer_list=list()):
         self.macro_layers = macro_layers
         self.tf_session = tf_session
         self.last_layer = None
@@ -27,10 +27,8 @@ class ANN(object):
         self.saver = None
         self.time_stamp = None
         self.best_accuracy = 0.0
-        if id is None:
-            self.id = self.uuid = uuid.uuid4().hex
-        else:
-            self.id = id
+        self.model_is_saved = False
+        self.id = self.uuid = uuid.uuid4().hex
 
     def connect_and_initialize(self):
         self.connect()
