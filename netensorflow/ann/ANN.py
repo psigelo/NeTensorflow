@@ -2,6 +2,7 @@ import datetime
 import os
 import random
 import uuid
+import json
 
 import tensorflow as tf
 from tensorflow.python.saved_model import tag_constants
@@ -159,10 +160,27 @@ class ANN(object):
         if not os.path.exists(ann_folder):
             os.mkdir(ann_folder)
         if check_point_iteration:
-            path  = os.path.join(save_base_folder, self.id + '_it_' + str(iteration))
-            print ("Saved path: ", path)
+            path = os.path.join(ann_folder, self.id + '_it_' + str(iteration) + '.ckpt')
+            print("Saved path: ", path)
             self.saver.save(self.tf_session, path)
         else:
-            path = os.path.join(save_base_folder, self.id)
+            path = os.path.join(ann_folder, self.id + '.ckpt')
             print("Saved path: ", path)
             self.saver.save(path)
+
+    def save_netensorflow_model(self, path):
+        ann_path = os.path.join(path, 'ann')
+        if not os.path.exists(path):
+            os.mkdir(path)
+        if not os.path.exists(ann_path):
+            os.mkdir(ann_path)
+
+        store_dict = dict()
+        store_dict['layers_structures'] = [(ls.name, ls.__class__.__name__)
+                                           for ls in self.macro_layers.layers_structure_list]
+
+        with open(ann_path + 'data.json', 'w') as fp:
+            json.dump(store_dict, fp)
+
+        for layer_structure in self.macro_layers.layers_structure_list:
+            layer_structure.save_netensorflow_model(ann_path)
