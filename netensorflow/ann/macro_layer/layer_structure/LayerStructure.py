@@ -1,14 +1,25 @@
 import random
 from enum import Enum
 
+import os
+
+import uuid
+
+import json
+
 
 class LayerType(Enum):
     ONE_DIMENSION = 1
     IMAGE = 2
 
 
+LayerTypeToString = {LayerType.ONE_DIMENSION: 'ONE_DIMENSION', LayerType.IMAGE: 'IMAGE'}
+StringToLayerType = {'ONE_DIMENSION': LayerType.ONE_DIMENSION, 'IMAGE': LayerType.IMAGE}
+
+
 class LayerStructure(object):
     def __init__(self, layer_structure_name, position, layer_type, layers=None):
+        self.name = self.__class__.__name__ + '_uuid_' + uuid.uuid4().hex
         if not isinstance(layer_structure_name, str):
             raise ValueError("macro_layer_name must be string")
         if isinstance(position, int):
@@ -54,3 +65,17 @@ class LayerStructure(object):
 
     def add_layer_at_top(self, layer):
         pass
+
+    def save_netensorflow_model(self, path):
+        layer_structure_path = os.path.join(path, self.name)
+        if not os.path.exists(layer_structure_path):
+            os.mkdir(layer_structure_path)
+
+        store_dict = dict()
+        store_dict['layers'] = [(ls.name, ls.__class__.__name__) for ls in self.layers]
+
+        with open(layer_structure_path + 'data.json', 'w') as fp:
+            json.dump(store_dict, fp)
+
+        for layer in self.layers:
+            layer.save_netensorflow_model(layer_structure_path)
