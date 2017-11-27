@@ -53,6 +53,22 @@ class DefaultTrainer(object):
 
         self.train_step = tf.train.AdamOptimizer(1e-4).minimize(self.loss_function, var_list=var_list)
 
+    def save_netensorflow_model(self, path):
+        trainer_path = os.path.join(path, self.trainer_name)
+        with open(trainer_path + '_internal_data.json', 'w') as fp:
+            json.dump(self.save_and_restore_dictionary, fp)
+
+    @classmethod
+    def restore_netensorflow_model(cls, path, name):
+        layer_path = os.path.join(path, name)
+        with open(layer_path + '_internal_data.json', 'r') as fp:
+            restore_json_dict = json.load(fp)
+
+        trainer = cls(restore=True)
+        for var_name in restore_json_dict:
+            setattr(trainer, var_name, restore_json_dict[var_name])
+        return trainer
+
     @property
     def train_step(self):
         return self.__train_step
