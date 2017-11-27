@@ -5,7 +5,7 @@ import tensorflow as tf
 import uuid
 
 from netensorflow.ann.ANNGlobals import register_netensorflow_class
-from netensorflow.ann.macro_layer.layer_structure.LayerStructure import LayerType, LayerTypeToString
+from netensorflow.ann.macro_layer.layer_structure.LayerStructure import LayerType, LayerTypeToString, StringToLayerType
 
 
 @register_netensorflow_class
@@ -74,6 +74,24 @@ class InputLayer(object):
         self.save_and_restore_dictionary['inputs_amount'] = self.__inputs_amount
 
     @property
+    def dataset_dimension(self):
+        return self.__dataset_dimension
+
+    @dataset_dimension.setter
+    def dataset_dimension(self, dataset_dimension):
+        self.__dataset_dimension = dataset_dimension
+        self.save_and_restore_dictionary['dataset_dimension'] = self.__dataset_dimension
+
+    @property
+    def inputs_dimension(self):
+        return self.__inputs_dimension
+
+    @inputs_dimension.setter
+    def inputs_dimension(self, inputs_dimension):
+        self.__inputs_dimension = inputs_dimension
+        self.save_and_restore_dictionary['inputs_dimension'] = self.__inputs_dimension
+
+    @property
     def filters_amount(self):
         return self.__filters_amount
 
@@ -106,6 +124,8 @@ class InputLayer(object):
 
     @layer_type.setter
     def layer_type(self, layer_type):
+        if isinstance(layer_type, str):
+            layer_type = StringToLayerType[layer_type]
         self.__layer_type = layer_type
         self.save_and_restore_dictionary['layer_type'] = LayerTypeToString[self.__layer_type]
 
@@ -142,7 +162,13 @@ class InputLayer(object):
 
     @summaries.setter
     def summaries(self, summaries):
-        self.__summaries = summaries
+        summaries_ = None
+        if len(summaries) > 0:
+            if isinstance(summaries[0], str):  # then is restoring, and is in string format.
+                summaries_ = [tf.get_default_graph().get_tensor_by_name(summary) for summary in summaries]
+        if summaries_ is None:
+            summaries_ = summaries
+        self.__summaries = summaries_
         self.save_and_restore_dictionary['summaries'] = [summary.name for summary in self.__summaries]
 
     @property
@@ -151,6 +177,8 @@ class InputLayer(object):
 
     @inputs.setter
     def inputs(self, inputs):
+        if isinstance(inputs, str):
+            inputs = tf.get_default_graph().get_tensor_by_name(inputs)  # we suppose that is being restore
         self.__inputs = inputs
         self.save_and_restore_dictionary['inputs'] = self.__inputs.name
 
@@ -160,5 +188,8 @@ class InputLayer(object):
 
     @input_reshaped.setter
     def input_reshaped(self, input_reshaped):
+        if isinstance(input_reshaped, str):
+            # we suppose that is being restore
+            input_reshaped = tf.get_default_graph().get_tensor_by_name(input_reshaped)
         self.__input_reshaped = input_reshaped
         self.save_and_restore_dictionary['input_reshaped'] = self.__input_reshaped.name
