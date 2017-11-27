@@ -4,10 +4,10 @@ import json
 
 import uuid
 
-from netensorflow.ann.ANNGlobals import register_netensorflow_class
+from netensorflow.ann.ANNGlobals import register_netensorflow_class, NETENSORFLOW_CLASSES
 from netensorflow.ann.macro_layer.layer_structure.layers.InputLayer import InputLayer
-
-from netensorflow.ann.macro_layer.layer_structure.LayerStructure import LayerStructure, LayerType
+from netensorflow.ann.macro_layer.layer_structure.LayerStructure import LayerStructure, LayerType, StringToLayerType, \
+    LayerTypeToString
 
 
 @register_netensorflow_class
@@ -50,5 +50,19 @@ class InputLayerStructure(LayerStructure):
         with open(layer_structure_path + '_data.json', 'w') as fp:
             json.dump(store_dict, fp)
 
+        with open(layer_structure_path + '_internal_data.json', 'w') as fp:
+            json.dump(self.save_and_restore_dictionary, fp)
+
         for layer in self.layers:
             layer.save_netensorflow_model(layer_structure_path)
+
+    @property
+    def layer_type(self):
+        return self.__layer_type
+
+    @layer_type.setter
+    def layer_type(self, layer_type):
+        if isinstance(layer_type, str):
+            layer_type = StringToLayerType[layer_type]
+        self.__layer_type = layer_type
+        self.save_and_restore_dictionary['layer_type'] = LayerTypeToString[self.__layer_type]
