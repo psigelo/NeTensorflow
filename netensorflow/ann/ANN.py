@@ -9,6 +9,7 @@ import tensorflow as tf
 from tensorflow.python.saved_model import tag_constants
 
 from netensorflow.ann.ANNGlobals import NETENSORFLOW_CLASSES
+from netensorflow.ann.macro_layer import MacroLayer
 from netensorflow.ann.macro_layer.layer_structure.LayerStructure import LayerType
 
 from netensorflow.ann.macro_layer.layer_structure.layers.TranslatorLayerImage2OneDimension import   \
@@ -200,6 +201,48 @@ class ANN(object):
 
         for trainer in self.trainer_list:
             trainer.save_netensorflow_model(ann_path)
+
+    @staticmethod
+    def restore_netensorflow_model(path, tf_session, base_folder='.', preserve_time_stamp=False):
+        ann_path = os.path.join(path + '_netensorflow_', 'ann')
+        with open(ann_path + '_data.json', 'r') as fp:
+            data_json = json.load(fp)
+
+        tensorflow_saved_model_path = path + '_model_'
+        tf.saved_model.loader.load(tf_session, [tag_constants.TRAINING], tensorflow_saved_model_path)
+
+        layers_structure_list = list()
+        for layer_structure_name, layer_structure_class_name in data_json['layers_structures']:
+            layer_structure_class = NETENSORFLOW_CLASSES[layer_structure_class_name]
+            layers_structure_list.append(layer_structure_class.restore_netensorflow_model(ann_path,
+                                                                                          layer_structure_name))
+        trainers = list()
+        for trainers_name, trainers_class_name in data_json['trainers']:
+            trainer_class = NETENSORFLOW_CLASSES[trainers_class_name]
+            trainers.append(trainer_class.restore_netensorflow_model(ann_path, trainers_name))
+
+        macro_layer = MacroLayer(layers_structure=layers_structure_list)
+        ann = ANN(macro_layers=macro_layer, base_folder=base_folder, trainer_list=trainers, tf_session=tf_session)
+
+        with open(ann_path + '_internal_data.json', 'r') as fp:
+            restore_json_dict = json.load(fp)
+
+        for var_name in restore_json_dict:
+            setattr(ann, var_name, restore_json_dict[var_name])
+
+        if not preserve_time_stamp:
+            ann.time_stamp = '{:%Y%m%d%H%M%S}'.format(datetime.datetime.now())
+
+        ann.first_layer = layers_structure_list[0].layers[0]
+        ann.last_layer = layers_structure_list[-1].layers[-1]
+
+        ann.train_writer = \
+            tf.summary.FileWriter(os.path.join(ann.base_folder, ann.time_stamp, 'train'), ann.tf_session.graph)
+        ann.run_writer = \
+            tf.summary.FileWriter(os.path.join(ann.base_folder, ann.time_stamp, 'run'), ann.tf_session.graph)
+        ann.saver = tf.train.Saver(max_to_keep=None)
+
+        return ann
 
     @property
     def id(self):
