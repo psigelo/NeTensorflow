@@ -51,5 +51,65 @@ class DefaultTrainer(object):
         self.__train_step = tf.train.AdamOptimizer(1e-4).minimize(self.loss_function, var_list=var_list)
 
     @property
-    def train_step(self):  # without a setter for security reasons
+    def train_step(self):
         return self.__train_step
+
+    @train_step.setter
+    def train_step(self, train_step):
+        if isinstance(train_step, str):
+            train_step = tf.get_default_graph().get_operation_by_name(train_step)
+        self.__train_step = train_step
+        self.save_and_restore_dictionary['train_step'] = self.__train_step.name
+
+    @property
+    def loss_function(self):
+        return self.__loss_function
+
+    @loss_function.setter
+    def loss_function(self, loss_function):
+        if isinstance(loss_function, str):
+            loss_function = tf.get_default_graph().get_tensor_by_name(loss_function)
+        self.__loss_function = loss_function
+        self.save_and_restore_dictionary['loss_function'] = self.__loss_function.name
+
+    @property
+    def train_summary(self):
+        return self.__train_summary
+
+    @train_summary.setter
+    def train_summary(self, train_summary):
+        if isinstance(train_summary, str):
+            train_summary = tf.get_default_graph().get_tensor_by_name(train_summary)
+        self.__train_summary = train_summary
+        self.save_and_restore_dictionary['train_summary'] = self.__train_summary.name
+
+    @property
+    def accuracy(self):
+        return self.__accuracy
+
+    @accuracy.setter
+    def accuracy(self, accuracy):
+        if isinstance(accuracy, str):
+            accuracy = tf.get_default_graph().get_tensor_by_name(accuracy)
+        self.__accuracy = accuracy
+        self.save_and_restore_dictionary['accuracy'] = self.__accuracy.name
+
+    @property
+    def desired_output(self):
+        return self.__desired_output
+
+    @desired_output.setter
+    def desired_output(self, desired_output):
+        if isinstance(desired_output, str):
+            desired_output = tf.get_default_graph().get_tensor_by_name(desired_output)
+        self.__desired_output = desired_output
+        self.save_and_restore_dictionary['desired_output'] = self.__desired_output.name
+
+    @property
+    def trainer_name(self):
+        return self.__trainer_name
+
+    @trainer_name.setter
+    def trainer_name(self, trainer_name):
+        self.__trainer_name = trainer_name
+        self.save_and_restore_dictionary['trainer_name'] = self.__trainer_name
