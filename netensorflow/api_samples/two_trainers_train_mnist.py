@@ -7,9 +7,11 @@ from netensorflow.ann.ANN import ANN
 from netensorflow.ann.macro_layer.MacroLayer import MacroLayer
 from netensorflow.ann.macro_layer.layer_structure.InputLayerStructure import InputLayerStructure
 from netensorflow.ann.macro_layer.layer_structure.LayerStructure import LayerStructure, LayerType
-from netensorflow.ann.macro_layer.layer_structure.layers.ConvolutionalLayerWithPoolMax2x2 import ConvolutionalLayerWithPoolMax2x2
+from netensorflow.ann.macro_layer.layer_structure.layers.ConvolutionalLayerWithPoolMax2x2 import\
+    ConvolutionalLayerWithPoolMax2x2
 from netensorflow.ann.macro_layer.layer_structure.layers.FullConnected import FullConnected
-from netensorflow.ann.macro_layer.layer_structure.layers.FullConnectedWithSoftmaxLayer import FullConnectedWithSoftmaxLayer
+from netensorflow.ann.macro_layer.layer_structure.layers.FullConnectedWithSoftmaxLayer import\
+    FullConnectedWithSoftmaxLayer
 from netensorflow.ann.macro_layer.trainers.DefaultTrainer import DefaultTrainer
 
 '''
@@ -68,6 +70,8 @@ def main():
                        global_iteration=global_it, trainers=[trainer_1])
         print("Train iteration: ", it)
         global_it += 1
+
+    ann.save(save_model=True)  # save a SavedModel of tensorflow.
 
 
 if __name__ == '__main__':
