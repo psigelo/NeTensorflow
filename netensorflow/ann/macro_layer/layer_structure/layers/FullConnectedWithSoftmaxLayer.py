@@ -11,7 +11,7 @@ from netensorflow.ann.tensorflow_tools.variable_summaries import variable_summar
 
 @register_netensorflow_class
 class FullConnectedWithSoftmaxLayer(object):
-    def __init__(self, inputs_amount=None):
+    def __init__(self, inputs_amount=None, restore=False):
         self.name = self.__class__.__name__ + '_uuid_' + uuid.uuid4().hex
         self.save_and_restore_dictionary = dict()
         self.__inputs_amount = None
@@ -21,7 +21,8 @@ class FullConnectedWithSoftmaxLayer(object):
         self.__layer_type = None
         self.__layer_structure_name = None
         self.__summaries = list()
-        self.inputs_amount = inputs_amount
+        if not restore:
+            self.inputs_amount = inputs_amount
 
     def get_tensor(self):
         if self.output is not None:
@@ -45,7 +46,7 @@ class FullConnectedWithSoftmaxLayer(object):
 
     def save_netensorflow_model(self, path):
         layer_path = os.path.join(path, self.name)
-        with open(layer_path + '_data.json', 'w') as fp:
+        with open(layer_path + '_internal_data.json', 'w') as fp:
             json.dump(self.save_and_restore_dictionary, fp)
 
     @property
@@ -138,3 +139,15 @@ class FullConnectedWithSoftmaxLayer(object):
         self.__layer_type = save_and_restore_dictionary['layer_type']
         self.__layer_structure_name = save_and_restore_dictionary['layer_type']
         self.__summaries = save_and_restore_dictionary['summaries']
+
+    @classmethod
+    def restore_netensorflow_model(cls, path, name):
+        layer_path = os.path.join(path, name)
+        with open(layer_path + '_internal_data.json', 'r') as fp:
+            restore_json_dict = json.load(fp)
+
+        layer = cls(restore=True)
+        for var_name in restore_json_dict:
+            setattr(layer, var_name, restore_json_dict[var_name])
+        layer.name = name
+        return layer
