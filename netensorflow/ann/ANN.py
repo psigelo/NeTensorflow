@@ -1,6 +1,7 @@
 import datetime
 import os
 import random
+import shutil
 import uuid
 import json
 
@@ -154,6 +155,8 @@ class ANN(object):
         if save_model:
             # Saving the tensorflow Model through the SavedModel builder
             saved_model_path = ann_folder + self.id + '_model_'
+            if os.path.exists(saved_model_path):
+                shutil.rmtree(saved_model_path, ignore_errors=True)
             nt_saved_model_path = ann_folder + self.id + '_netensorflow_'
             builder = tf.saved_model.builder.SavedModelBuilder(saved_model_path)
             builder.add_meta_graph_and_variables(self.tf_session, [tag_constants.TRAINING])
@@ -172,7 +175,7 @@ class ANN(object):
         else:
             path = os.path.join(ann_folder, self.id + '.ckpt')
             print("Saved path: ", path)
-            self.saver.save(path)
+            self.saver.save(self.tf_session, path)
 
     def save_netensorflow_model(self, path):
         ann_path = os.path.join(path, 'ann')
