@@ -97,6 +97,8 @@ class ConvolutionalLayer(object):
 
     @output.setter
     def output(self, output):
+        if isinstance(output, str):
+            output = tf.get_default_graph().get_tensor_by_name(output)
         self.__output = output
         self.save_and_restore_dictionary['output'] = self.__output.name
 
@@ -124,6 +126,8 @@ class ConvolutionalLayer(object):
 
     @weights.setter
     def weights(self, weights):
+        if isinstance(weights, str):
+            weights = tf.get_default_graph().get_tensor_by_name(weights)
         self.__weights = weights
         self.save_and_restore_dictionary['weights'] = self.__weights.name
 
@@ -133,6 +137,8 @@ class ConvolutionalLayer(object):
 
     @bias.setter
     def bias(self, bias):
+        if isinstance(bias, str):
+            bias = tf.get_default_graph().get_tensor_by_name(bias)
         self.__bias = bias
         self.save_and_restore_dictionary['bias'] = self.__bias.name
 
@@ -169,6 +175,8 @@ class ConvolutionalLayer(object):
 
     @layer_type.setter
     def layer_type(self, layer_type):
+        if isinstance(layer_type, str):
+            layer_type = StringToLayerType[layer_type]
         self.__layer_type = layer_type
         self.save_and_restore_dictionary['layer_type'] = LayerTypeToString[self.__layer_type]
 
@@ -205,5 +213,11 @@ class ConvolutionalLayer(object):
 
     @summaries.setter
     def summaries(self, summaries):
-        self.__summaries = summaries
+        summaries_ = None
+        if len(summaries) > 0:
+            if isinstance(summaries[0], str):  # then is restoring, and is in string format.
+                summaries_ = [tf.get_default_graph().get_tensor_by_name(summary) for summary in summaries]
+        if summaries_ is None:
+            summaries_ = summaries
+        self.__summaries = summaries_
         self.save_and_restore_dictionary['summaries'] = [summary.name for summary in self.__summaries]
