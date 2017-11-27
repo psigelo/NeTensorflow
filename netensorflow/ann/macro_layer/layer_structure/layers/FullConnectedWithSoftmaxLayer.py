@@ -5,7 +5,7 @@ import tensorflow as tf
 import uuid
 
 from netensorflow.ann.ANNGlobals import register_netensorflow_class
-from netensorflow.ann.macro_layer.layer_structure.LayerStructure import LayerTypeToString
+from netensorflow.ann.macro_layer.layer_structure.LayerStructure import LayerTypeToString, StringToLayerType
 from netensorflow.ann.tensorflow_tools.variable_summaries import variable_summaries
 
 
@@ -67,6 +67,8 @@ class FullConnectedWithSoftmaxLayer(object):
 
     @weights.setter
     def weights(self, weight):
+        if isinstance(weight, str):
+            weight = tf.get_default_graph().get_tensor_by_name(weight)
         self.__weights = weight
         self.save_and_restore_dictionary['weights'] = self.__weights.name
 
@@ -76,7 +78,13 @@ class FullConnectedWithSoftmaxLayer(object):
 
     @summaries.setter
     def summaries(self, summaries):
-        self.__summaries = summaries
+        summaries_ = None
+        if len(summaries) > 0:
+            if isinstance(summaries[0], str):  # then is restoring, and is in string format.
+                summaries_ = [tf.get_default_graph().get_tensor_by_name(summary) for summary in summaries]
+        if summaries_ is None:
+            summaries_ = summaries
+        self.__summaries = summaries_
         self.save_and_restore_dictionary['summaries'] = [summary.name for summary in self.__summaries]
 
     @property
@@ -85,6 +93,8 @@ class FullConnectedWithSoftmaxLayer(object):
 
     @bias.setter
     def bias(self, bias):
+        if isinstance(bias, str):
+            bias = tf.get_default_graph().get_tensor_by_name(bias)
         self.__bias = bias
         self.save_and_restore_dictionary['bias'] = self.__bias.name
 
@@ -102,8 +112,10 @@ class FullConnectedWithSoftmaxLayer(object):
         return self.__layer_type
 
     @layer_type.setter
-    def layer_type(self, layer_name):
-        self.__layer_type = layer_name
+    def layer_type(self, layer_type):
+        if isinstance(layer_type, str):
+            layer_type = StringToLayerType[layer_type]
+        self.__layer_type = layer_type
         self.save_and_restore_dictionary['layer_name'] = LayerTypeToString[self.__layer_type]
 
     @property
@@ -112,6 +124,8 @@ class FullConnectedWithSoftmaxLayer(object):
 
     @output.setter
     def output(self, output):
+        if isinstance(output, str):
+            output = tf.get_default_graph().get_tensor_by_name(output)
         self.__output = output
         self.save_and_restore_dictionary['output'] = self.__output.name
 
