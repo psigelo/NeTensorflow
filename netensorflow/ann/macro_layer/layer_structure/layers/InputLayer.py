@@ -10,7 +10,7 @@ from netensorflow.ann.macro_layer.layer_structure.LayerStructure import LayerTyp
 
 @register_netensorflow_class
 class InputLayer(object):
-    def __init__(self, inputs_dimension, dataset_dimension=None, restore=False):
+    def __init__(self, inputs_dimension=None, dataset_dimension=None, restore=False):
         self.name = self.__class__.__name__ + '_uuid_' + uuid.uuid4().hex
         self.save_and_restore_dictionary = dict()
         self.__inputs_amount = None
@@ -24,8 +24,12 @@ class InputLayer(object):
         self.__summaries = list()
         self.__inputs = None
         self.__input_reshaped = None
+        self.__inputs_dimension = None
+        self.__dataset_dimension = None
 
         if not restore:
+            self.dataset_dimension = dataset_dimension
+            self.inputs_dimension = inputs_dimension
             if len(inputs_dimension) == 4:
                 self.layer_type = LayerType.IMAGE
                 self.filters_amount = inputs_dimension[3]
@@ -50,7 +54,7 @@ class InputLayer(object):
 
     def save_netensorflow_model(self, path):
         layer_path = os.path.join(path, self.name)
-        with open(layer_path + '_data.json', 'w') as fp:
+        with open(layer_path + '_internal_data.json', 'w') as fp:
             json.dump(self.save_and_restore_dictionary, fp)
 
     @staticmethod
@@ -193,3 +197,15 @@ class InputLayer(object):
             input_reshaped = tf.get_default_graph().get_tensor_by_name(input_reshaped)
         self.__input_reshaped = input_reshaped
         self.save_and_restore_dictionary['input_reshaped'] = self.__input_reshaped.name
+
+    @classmethod
+    def restore_netensorflow_model(cls, path, name):
+        layer_path = os.path.join(path, name)
+        with open(layer_path + '_internal_data.json', 'r') as fp:
+            restore_json_dict = json.load(fp)
+
+        layer = cls(restore=True)
+        for var_name in restore_json_dict:
+            setattr(layer, var_name, restore_json_dict[var_name])
+        layer.name = name
+        return layer
