@@ -1,3 +1,6 @@
+import os
+
+import json
 import tensorflow as tf
 import uuid
 
@@ -6,22 +9,22 @@ from netensorflow.ann.ANNGlobals import register_netensorflow_class
 
 @register_netensorflow_class
 class DefaultTrainer(object):
-    def __init__(self, layers_structures=None, name='DefaultTrainer'):
+    def __init__(self, layers_structures=None, name='DefaultTrainer', restore=False):
+        # ToDO: Name algorithm to take in account problems like two trainers with same name that can not
+        #       restore properly.
         self.uuid = uuid.uuid4().hex
+        self.save_and_restore_dictionary = dict()
+        self.__trainer_name = None
         self.__loss_function = None
-        self.__optimizer = None
         self.__train_step = None
-        self.last_layer = None
-        self.name = name
-        if not isinstance(layers_structures, list):
-            raise Exception('layer_structures must be a list of layer structures')
-        self.layers_structures = layers_structures
-        self.optimizer_step = None
-        self.output_last_layer = None
-        self.desired_output = None
-        self.loss_function = None
-        self.train_summary = None
-        self.accuracy = None
+        self.__desired_output = None
+        self.__loss_function = None
+        self.__train_summary = None
+        self.__accuracy = None
+        self.layers_structures = None
+        if not restore:
+            self.trainer_name = name + '_uuid_' + self.uuid
+            self.layers_structures = layers_structures
 
     def create_loss_function(self):
         self.last_layer = self.layers_structures[-1].layers[-1]
