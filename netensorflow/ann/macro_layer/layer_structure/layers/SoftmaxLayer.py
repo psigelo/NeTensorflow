@@ -5,7 +5,7 @@ import tensorflow as tf
 import uuid
 
 from netensorflow.ann.ANNGlobals import register_netensorflow_class
-from netensorflow.ann.macro_layer.layer_structure.LayerStructure import LayerTypeToString
+from netensorflow.ann.macro_layer.layer_structure.LayerStructure import LayerTypeToString, StringToLayerType
 
 
 @register_netensorflow_class
@@ -47,6 +47,8 @@ class SoftmaxLayer(object):
 
     @output.setter
     def output(self, output):
+        if isinstance(output, str):
+            output = tf.get_default_graph().get_tensor_by_name(output)
         self.__output = output
         self.save_and_restore_dictionary['output'] = self.__output.name
 
@@ -65,6 +67,8 @@ class SoftmaxLayer(object):
 
     @layer_type.setter
     def layer_type(self, layer_type):
+        if isinstance(layer_type, str):
+            layer_type = StringToLayerType[layer_type]
         self.__layer_type = layer_type
         self.save_and_restore_dictionary['layer_type'] = LayerTypeToString[self.__layer_type]
 
