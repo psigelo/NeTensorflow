@@ -68,3 +68,23 @@ class LayerStructure(object):
 
         for layer in self.layers:
             layer.save_netensorflow_model(layer_structure_path)
+
+    @property
+    def layer_type(self):
+        return self.__layer_type
+
+    @layer_type.setter
+    def layer_type(self, layer_type):
+        if isinstance(layer_type, str):
+            layer_type = StringToLayerType[layer_type]
+        self.__layer_type = layer_type
+        self.save_and_restore_dictionary['layer_type'] = LayerTypeToString[self.__layer_type]
+
+    @property
+    def layer_structure_name(self):
+        return self.__layer_structure_name
+
+    @layer_structure_name.setter
+    def layer_structure_name(self, layer_structure_name):
+        self.__layer_structure_name = layer_structure_name
+        self.save_and_restore_dictionary['layer_structure_name'] = self.__layer_structure_name
