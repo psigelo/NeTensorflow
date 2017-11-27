@@ -15,21 +15,28 @@ from netensorflow.ann.macro_layer.layer_structure.layers.TranslatorLayerImage2On
 
 
 class ANN(object):
-    def __init__(self, macro_layers=None, tf_session=None, base_folder='.', trainer_list=list()):
-        self.macro_layers = macro_layers
+    def __init__(self, macro_layers=None, tf_session=None, base_folder='.', trainer_list=list(), restore=False):
+        self.save_and_restore_dictionary = dict()
         self.tf_session = tf_session
-        self.last_layer = None
-        self.first_layer = None
+        self.__id = uuid.uuid4().hex
+        self.__tf_summaries_ann = None
+        self.__base_folder = base_folder
+        self.__time_stamp = None
+        self.__best_accuracy = 0.0
+        self.model_is_saved = False
+        self.trainer_list = None
+        self.macro_layers = None
         self.train_writer = None
         self.run_writer = None
-        self.tf_summaries_ann = None
-        self.base_folder = base_folder
-        self.trainer_list = trainer_list
         self.saver = None
-        self.time_stamp = None
-        self.best_accuracy = 0.0
-        self.model_is_saved = False
-        self.id = self.uuid = uuid.uuid4().hex
+        self.last_layer = None
+        self.first_layer = None
+        if not restore:
+            self.trainer_list = trainer_list
+            self.macro_layers = macro_layers
+            self.model_is_saved = False
+        else:
+            self.model_is_saved = True  # actually is being restore from the model.
 
     def connect_and_initialize(self):
         self.connect()
@@ -183,3 +190,53 @@ class ANN(object):
 
         for layer_structure in self.macro_layers.layers_structure_list:
             layer_structure.save_netensorflow_model(ann_path)
+
+    @property
+    def id(self):
+        return self.__id
+
+    @id.setter
+    def id(self, id):
+        self.__id = id
+        self.save_and_restore_dictionary['id'] = self.__id
+
+    @property
+    def tf_summaries_ann(self):
+
+        return self.__tf_summaries_ann
+
+    @tf_summaries_ann.setter
+    def tf_summaries_ann(self, tf_summaries_ann):
+        if isinstance(tf_summaries_ann, str):
+            tf_summaries_ann = tf.get_default_graph().get_tensor_by_name(tf_summaries_ann)
+        self.__tf_summaries_ann = tf_summaries_ann
+        self.save_and_restore_dictionary['tf_summaries_ann'] = self.__tf_summaries_ann.name
+
+    @property
+    def base_folder(self):
+        return self.__base_folder
+
+    @base_folder.setter
+    def base_folder(self, base_folder):
+        self.__base_folder = base_folder
+        self.save_and_restore_dictionary['base_folder'] = self.__base_folder
+
+    @property
+    def time_stamp(self):
+        return self.__time_stamp
+
+    @time_stamp.setter
+    def time_stamp(self, time_stamp):
+        self.__time_stamp = time_stamp
+        self.save_and_restore_dictionary['time_stamp'] = self.__time_stamp
+
+    @property
+    def best_accuracy(self):
+        return self.__best_accuracy
+
+    @best_accuracy.setter
+    def best_accuracy(self, best_accuracy):
+        if isinstance(best_accuracy, str):
+            best_accuracy = float(best_accuracy)
+        self.__best_accuracy = best_accuracy
+        self.save_and_restore_dictionary['best_accuracy'] = str(self.__best_accuracy)
