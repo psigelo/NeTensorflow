@@ -7,7 +7,7 @@ import uuid
 
 import json
 
-from netensorflow.ann.ANNGlobals import register_netensorflow_class
+from netensorflow.ann.ANNGlobals import register_netensorflow_class, NETENSORFLOW_CLASSES
 
 
 class LayerType(Enum):
@@ -21,21 +21,26 @@ StringToLayerType = {'ONE_DIMENSION': LayerType.ONE_DIMENSION, 'IMAGE': LayerTyp
 
 @register_netensorflow_class
 class LayerStructure(object):
-    def __init__(self, layer_structure_name, layer_type, layers=None):
+    def __init__(self, layer_structure_name=None, layer_type=None, layers=None, restore=False):
         self.name = self.__class__.__name__ + '_uuid_' + uuid.uuid4().hex
-        if not isinstance(layer_structure_name, str):
-            raise ValueError("macro_layer_name must be string")
-        if not isinstance(layer_type, LayerType):
-            raise Exception('layer_type is not LayerType')
-        self.layer_type = layer_type
-        self.layer_structure_name = layer_structure_name
+        self.__layer_type = None
+        self.__layer_structure_name = None
         self.layers = list()
+        self.save_and_restore_dictionary = dict()
 
-        if isinstance(layers, list):
-            self.layers = layers
-            for layer in layers:
-                layer.layer_type = layer_type
-                layer.layer_structure_name = layer_structure_name
+        if not restore:
+            self.layer_type = layer_type
+            self.layer_structure_name = layer_structure_name
+            if not isinstance(layer_structure_name, str):
+                raise ValueError("macro_layer_name must be string")
+            if not isinstance(layer_type, LayerType):
+                raise Exception('layer_type is not LayerType')
+
+            if isinstance(layers, list):
+                self.layers = layers
+                for layer in layers:
+                    layer.layer_type = layer_type
+                    layer.layer_structure_name = layer_structure_name
 
     def add_layer(self, layer, layer_position_place=None):
         layer.layer_type = self.layer_type
@@ -65,6 +70,9 @@ class LayerStructure(object):
 
         with open(layer_structure_path + '_data.json', 'w') as fp:
             json.dump(store_dict, fp)
+
+        with open(layer_structure_path + '_internal_data.json', 'w') as fp:
+            json.dump(self.save_and_restore_dictionary, fp)
 
         for layer in self.layers:
             layer.save_netensorflow_model(layer_structure_path)
