@@ -184,12 +184,19 @@ class ANN(object):
         store_dict = dict()
         store_dict['layers_structures'] = [(ls.name, ls.__class__.__name__)
                                            for ls in self.macro_layers.layers_structure_list]
+        store_dict['trainers'] = [(trainer.trainer_name, trainer.__class__.__name__) for trainer in self.trainer_list]
 
         with open(ann_path + '_data.json', 'w') as fp:
             json.dump(store_dict, fp)
 
+        with open(ann_path + '_internal_data.json', 'w') as fp:
+            json.dump(self.save_and_restore_dictionary, fp)
+
         for layer_structure in self.macro_layers.layers_structure_list:
             layer_structure.save_netensorflow_model(ann_path)
+
+        for trainer in self.trainer_list:
+            trainer.save_netensorflow_model(ann_path)
 
     @property
     def id(self):
