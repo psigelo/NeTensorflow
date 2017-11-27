@@ -77,6 +77,28 @@ class LayerStructure(object):
         for layer in self.layers:
             layer.save_netensorflow_model(layer_structure_path)
 
+    @classmethod
+    def restore_netensorflow_model(cls, path, name):
+        layer_structure_path = os.path.join(path, name)
+
+        with open(layer_structure_path + '_data.json', 'r') as fp:
+            layer_json_info = json.load(fp)
+        layers_list = list()
+        for layer_name, layer_class_name in layer_json_info['layers']:
+            layer = NETENSORFLOW_CLASSES[layer_class_name]
+            layers_list.append(layer.restore_netensorflow_model(layer_structure_path, layer_name))
+
+        layer_structure = cls(restore=True)
+
+        with open(layer_structure_path + '_internal_data.json', 'r') as fp:
+            restore_json_dict = json.load(fp)
+
+        for var_name in restore_json_dict:
+            setattr(layer_structure, var_name, restore_json_dict[var_name])
+        layer_structure.layers = layers_list
+        layer_structure.name = name
+        return layer_structure
+
     @property
     def layer_type(self):
         return self.__layer_type
