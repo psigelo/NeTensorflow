@@ -27,19 +27,19 @@ class DefaultTrainer(object):
             self.layers_structures = layers_structures
 
     def create_loss_function(self):
-        self.last_layer = self.layers_structures[-1].layers[-1]
-        self.output_last_layer = self.last_layer.get_tensor()
-        with tf.name_scope(self.name):
+        last_layer = self.layers_structures[-1].layers[-1]
+        output_last_layer = last_layer.get_tensor()
+        with tf.name_scope(self.trainer_name):
             with tf.name_scope('desired_output'):
-                self.desired_output = tf.placeholder(tf.float32, [None, self.last_layer.inputs_amount])
+                self.desired_output = tf.placeholder(tf.float32, [None, last_layer.inputs_amount])
 
             with tf.name_scope('loss_func'):
                 self.loss_function = tf.reduce_mean(tf.nn.softmax_cross_entropy_with_logits(
-                    labels=self.desired_output, logits=self.output_last_layer))
+                    labels=self.desired_output, logits=output_last_layer))
 
             with tf.name_scope('accuracy'):
                 with tf.name_scope('correct_prediction'):
-                    correct_prediction = tf.equal(tf.argmax(self.output_last_layer, 1),
+                    correct_prediction = tf.equal(tf.argmax(output_last_layer, 1),
                                                   tf.argmax(self.desired_output, 1))
                 with tf.name_scope('accuracy'):
                     self.accuracy = tf.reduce_mean(tf.cast(correct_prediction, tf.float32))
@@ -51,7 +51,7 @@ class DefaultTrainer(object):
             for layer in layers_str.layers:
                 var_list += layer.layer_variables
 
-        self.__train_step = tf.train.AdamOptimizer(1e-4).minimize(self.loss_function, var_list=var_list)
+        self.train_step = tf.train.AdamOptimizer(1e-4).minimize(self.loss_function, var_list=var_list)
 
     @property
     def train_step(self):
