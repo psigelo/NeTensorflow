@@ -10,13 +10,17 @@ from netensorflow.ann.macro_layer.layer_structure.layers.ConvolutionalLayer impo
 
 @register_netensorflow_class
 class ConvolutionalLayerWithPoolMax2x2(ConvolutionalLayer):
-    def __init__(self, height_patch, width_patch, filters_amount, strides, padding='SAME', max_pool_padding='SAME'):
+    def __init__(self, height_patch=None, width_patch=None, filters_amount=None, strides=None, padding='SAME',
+                 max_pool_padding='SAME', restore=False):
         self.name = self.__class__.__name__ + '_uuid_' + uuid.uuid4().hex
-        super(ConvolutionalLayerWithPoolMax2x2, self).__init__(
-            height_patch, width_patch, filters_amount, strides, padding)
         self.__max_pool_padding = None
         self.__pool_output = None
-        self.max_pool_padding = max_pool_padding
+        if not restore:
+            super(ConvolutionalLayerWithPoolMax2x2, self).__init__(
+                height_patch, width_patch, filters_amount, strides, padding)
+            self.max_pool_padding = max_pool_padding
+        else:
+            super(ConvolutionalLayerWithPoolMax2x2, self).__init__(restore=True)
 
     def connect_layer(self, prev_layer, input_tensor):
         with tf.name_scope('PoolMax2x2'):
@@ -41,7 +45,7 @@ class ConvolutionalLayerWithPoolMax2x2(ConvolutionalLayer):
 
     def save_netensorflow_model(self, path):
         layer_path = os.path.join(path, self.name)
-        with open(layer_path + '_data.json', 'w') as fp:
+        with open(layer_path + '_internal_data.json', 'w') as fp:
             json.dump(self.save_and_restore_dictionary, fp)
 
     @property
@@ -59,5 +63,19 @@ class ConvolutionalLayerWithPoolMax2x2(ConvolutionalLayer):
 
     @pool_output.setter
     def pool_output(self, pool_output):
+        if isinstance(pool_output, str):
+            pool_output = tf.get_default_graph().get_tensor_by_name(pool_output)
         self.__pool_output = pool_output
         self.save_and_restore_dictionary['pool_output'] = self.__pool_output.name
+
+    @classmethod
+    def restore_netensorflow_model(cls, path, name):
+        layer_path = os.path.join(path, name)
+        with open(layer_path + '_internal_data.json', 'r') as fp:
+            restore_json_dict = json.load(fp)
+
+        layer = cls(restore=True)
+        for var_name in restore_json_dict:
+            setattr(layer, var_name, restore_json_dict[var_name])
+        layer.name = name
+        return layer
