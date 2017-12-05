@@ -57,9 +57,6 @@ class LayerStructure(object):
     def add_layer_at_bottom(self, layer):
         self.layers.insert(0, layer)
 
-    def add_layer_at_top(self, layer):
-        pass
-
     def save_netensorflow_model(self, path):
         layer_structure_path = os.path.join(path, self.name)
         if not os.path.exists(layer_structure_path):
