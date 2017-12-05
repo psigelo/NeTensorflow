@@ -55,16 +55,6 @@ class ConvolutionalLayer(object):
                 self.summaries = self.summaries + variable_summaries(self.__bias)
             self.output = tf.nn.relu(
                 tf.nn.conv2d(input_tensor, self.weights, self.strides, padding=self.padding) + self.bias)
-            self.calc_image_height_width(prev_layer)
-
-    def calc_image_height_width(self, prev_layer):
-        if self.padding == 'VALID':
-            raise Exception('Case not implemented')  # ToDo: create a algorithm to calc h and w in padding=VALID case
-        elif self.padding == 'SAME':
-            self.height_image = prev_layer.height_image
-            self.width_image = prev_layer.width_image
-        else:
-            raise Exception('padding name not supported')
 
     def save_netensorflow_model(self, path):
         layer_path = os.path.join(path, self.name)

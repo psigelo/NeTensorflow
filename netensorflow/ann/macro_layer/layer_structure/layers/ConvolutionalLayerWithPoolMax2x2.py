@@ -34,15 +34,6 @@ class ConvolutionalLayerWithPoolMax2x2(ConvolutionalLayer):
         else:
             raise Exception("NotConnected")
 
-    def calc_image_height_width(self, prev_layer):
-        if self.padding == 'VALID':
-            raise Exception('Case not implemented')  # ToDo: create a algorithm to calc h and w in padding=VALID case
-        elif self.padding == 'SAME':
-            self.height_image = np.int(prev_layer.height_image / 2)
-            self.width_image = np.int(prev_layer.width_image / 2)
-        else:
-            raise Exception('padding name not supported')
-
     def save_netensorflow_model(self, path):
         layer_path = os.path.join(path, self.name)
         with open(layer_path + '_internal_data.json', 'w') as fp:
