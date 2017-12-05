@@ -14,10 +14,12 @@ from netensorflow.ann.macro_layer.layer_structure.LayerStructure import LayerTyp
 
 from netensorflow.ann.macro_layer.layer_structure.layers.TranslatorLayerImage2OneDimension import   \
     TranslatorLayerImage2OneDimension
+from tensorflow.python import debug as tf_debug
 
 
 class ANN(object):
-    def __init__(self, macro_layers=None, tf_session=None, base_folder='.', trainer_list=list(), restore=False):
+    def __init__(self, macro_layers=None, tf_session=None, base_folder='.', trainer_list=list(), restore=False,
+                 tfdbg=False):
         self.save_and_restore_dictionary = dict()
         self.tf_session = tf_session
         self.__id = uuid.uuid4().hex
@@ -33,6 +35,7 @@ class ANN(object):
         self.saver = None
         self.last_layer = None
         self.first_layer = None
+        self.tfdbg = tfdbg
         if not restore:
             self.trainer_list = trainer_list
             self.macro_layers = macro_layers
@@ -91,6 +94,8 @@ class ANN(object):
 
     def initialize(self):
         self.tf_session.run(tf.global_variables_initializer())
+        if self.tfdbg:
+            self.tf_session = tf_debug.LocalCLIDebugWrapperSession(self.tf_session)
 
     def run(self, global_iteration, input_tensor_value, write_summaries=True):
         input_tensor = self.first_layer.get_input_tensor()
@@ -255,7 +260,6 @@ class ANN(object):
 
     @property
     def tf_summaries_ann(self):
-
         return self.__tf_summaries_ann
 
     @tf_summaries_ann.setter
