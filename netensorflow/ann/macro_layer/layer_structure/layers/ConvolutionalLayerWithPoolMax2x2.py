@@ -10,8 +10,8 @@ from netensorflow.ann.macro_layer.layer_structure.layers.ConvolutionalLayer impo
 
 @register_netensorflow_class
 class ConvolutionalLayerWithPoolMax2x2(ConvolutionalLayer):
-    def __init__(self, height_patch=None, width_patch=None, filters_amount=None, strides=None, padding='SAME',
-                 max_pool_padding='SAME', restore=False):
+    def __init__(self, height_patch=None, width_patch=None, filters_amount=None, strides=list([1, 1, 1, 1]),
+                 padding='SAME', max_pool_padding='SAME', restore=False):
         self.name = self.__class__.__name__ + '_uuid_' + uuid.uuid4().hex
         self.__max_pool_padding = None
         self.__pool_output = None

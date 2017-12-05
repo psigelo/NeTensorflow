@@ -80,7 +80,7 @@ class ANN(object):
             trainer.create_loss_function()
 
         self.train_writer = \
-            tf.summary.FileWriter(os.path.join(self.base_folder, self.time_stamp,  'train'), self.tf_session.graph)
+            tf.summary.FileWriter(os.path.join(self.base_folder, self.time_stamp, 'train'), self.tf_session.graph)
         self.run_writer = \
             tf.summary.FileWriter(os.path.join(self.base_folder, self.time_stamp, 'run'), self.tf_session.graph)
 
@@ -253,8 +253,8 @@ class ANN(object):
         return self.__id
 
     @id.setter
-    def id(self, id):
-        self.__id = id
+    def id(self, _id):
+        self.__id = _id
         self.save_and_restore_dictionary['id'] = self.__id
 
     @property
