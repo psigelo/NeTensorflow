@@ -12,7 +12,6 @@ class DefaultTrainer(object):
     def __init__(self, layers_structures=None, name='DefaultTrainer', restore=False, learning_rate=0.9):
         # ToDO: Name algorithm to take in account problems like two trainers with same name that can not
         #       restore properly.
-        self.uuid = uuid.uuid4().hex
         self.save_and_restore_dictionary = dict()
         self.__trainer_name = None
         self.__loss_function = None
@@ -24,7 +23,7 @@ class DefaultTrainer(object):
         self.layers_structures = None
         self.learning_rate = learning_rate  # Todo Make the correspond property for save and restore.
         if not restore:
-            self.trainer_name = name + '_uuid_' + self.uuid
+            self.trainer_name = name + '_uuid_' + uuid.uuid4().hex
             self.layers_structures = layers_structures
 
     def create_loss_function(self):

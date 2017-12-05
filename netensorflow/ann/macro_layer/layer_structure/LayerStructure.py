@@ -26,7 +26,6 @@ class LayerStructure(object):
         self.save_and_restore_dictionary = dict()
         self.__layer_type = None
         self.__layer_structure_name = None
-        self.layers = list()
 
         if not restore:
             self.layer_type = layer_type
