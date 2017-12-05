@@ -35,7 +35,7 @@ class FullConnected(object):
             with tf.name_scope('weights'):
                 self.weights = tf.Variable(tf.truncated_normal(
                     [prev_layer.inputs_amount, self.inputs_amount], stddev=0.1))
-#                self.summaries = self.summaries + variable_summaries(self.weights)
+                self.summaries = self.summaries + variable_summaries(self. weights)
             with tf.name_scope('bias'):
                 self.bias = tf.Variable(tf.constant(0.1, shape=[self.inputs_amount]))
                 self.summaries = self.summaries + variable_summaries(self.bias)
