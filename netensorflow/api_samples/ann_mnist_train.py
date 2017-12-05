@@ -30,7 +30,7 @@ def main():
     out_layer = FullConnectedWithSoftmaxLayer(inputs_amount=10)
 
     # Layer Structures
-    input_layer_structure = InputLayerStructure(input_dim)
+    input_layer_structure = InputLayerStructure(input_dim, layer_type=LayerType.ONE_DIMENSION)
     hidden_layer_structure = LayerStructure('Hidden', layer_type=LayerType.ONE_DIMENSION, layers=[hidden_layer])
     output_layer_structure = LayerStructure('Output',  layer_type=LayerType.ONE_DIMENSION, layers=[out_layer])
 

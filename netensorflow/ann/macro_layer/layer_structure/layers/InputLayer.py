@@ -10,7 +10,7 @@ from netensorflow.ann.macro_layer.layer_structure.LayerStructure import LayerTyp
 
 @register_netensorflow_class
 class InputLayer(object):
-    def __init__(self, inputs_dimension=None, dataset_dimension=None, restore=False):
+    def __init__(self, inputs_dimension=None, layer_type=None, restore=False):
         self.name = self.__class__.__name__ + '_uuid_' + uuid.uuid4().hex
         self.save_and_restore_dictionary = dict()
         self.__inputs_amount = None
@@ -23,34 +23,26 @@ class InputLayer(object):
         self.__layer_structure_name = None
         self.__summaries = list()
         self.__inputs = None
-        self.__input_reshaped = None
         self.__inputs_dimension = None
         self.__dataset_dimension = None
 
         if not restore:
-            self.dataset_dimension = dataset_dimension
+            self.layer_type = layer_type
             self.inputs_dimension = inputs_dimension
             if len(inputs_dimension) == 4:
-                self.layer_type = LayerType.IMAGE
                 self.filters_amount = inputs_dimension[3]
                 self.height_image = inputs_dimension[1]
                 self.width_image = inputs_dimension[2]
             elif len(inputs_dimension) == 2:
-                self.layer_type = LayerType.ONE_DIMENSION
                 self.inputs_amount = inputs_dimension[1]
             else:
                 raise Exception('layer_type not supported')
 
-            dimension = dataset_dimension if dataset_dimension is not None else inputs_dimension
             with tf.name_scope('InputLayer'):
-                self.inputs = tf.placeholder(tf.float32, dimension)
-                self.input_reshaped = self.inputs
-                if self.layer_type == LayerType.IMAGE:
-                    self.input_reshaped = tf.reshape(self.inputs,
-                                                     [-1, self.height_image, self.width_image, self.filters_amount])
+                self.inputs = tf.placeholder(tf.float32, inputs_dimension)
 
     def get_tensor(self):
-        return self.input_reshaped
+        return self.inputs
 
     def save_netensorflow_model(self, path):
         layer_path = os.path.join(path, self.name)
@@ -185,18 +177,6 @@ class InputLayer(object):
             inputs = tf.get_default_graph().get_tensor_by_name(inputs)  # we suppose that is being restore
         self.__inputs = inputs
         self.save_and_restore_dictionary['inputs'] = self.__inputs.name
-
-    @property
-    def input_reshaped(self):
-        return self.__input_reshaped
-
-    @input_reshaped.setter
-    def input_reshaped(self, input_reshaped):
-        if isinstance(input_reshaped, str):
-            # we suppose that is being restore
-            input_reshaped = tf.get_default_graph().get_tensor_by_name(input_reshaped)
-        self.__input_reshaped = input_reshaped
-        self.save_and_restore_dictionary['input_reshaped'] = self.__input_reshaped.name
 
     @classmethod
     def restore_netensorflow_model(cls, path, name):
