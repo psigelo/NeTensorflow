@@ -119,23 +119,23 @@ class ANN(object):
         return result
 
     def train_step(self, input_tensor_value, output_desired, global_iteration,  write_summaries=True, trainers=None,
-                   verbose=True):
+                   verbose=True, run_performance_store_prob=0.1):
         for trainer in self.trainer_list:
             if trainers is not None:
                 if trainer.name not in list(map(lambda x: x.name, trainers)):
                     continue
             input_tensor = self.first_layer.get_input_tensor()
             desired_output = trainer.desired_output
+            feed_dict = {input_tensor: input_tensor_value, desired_output: output_desired}
             if write_summaries:
                 run_options = None
                 run_metadata = None
-                if random.random() < 0.01:
+                if random.random() < run_performance_store_prob:
                     run_options = tf.RunOptions(trace_level=tf.RunOptions.FULL_TRACE)
                     run_metadata = tf.RunMetadata()
                 summ_ann, summ_train, _, accuracy = self.tf_session.run([self.tf_summaries_ann, trainer.train_summary,
                                                                          trainer.train_step, trainer.accuracy],
-                                                                        feed_dict={input_tensor: input_tensor_value,
-                                                                                   desired_output: output_desired},
+                                                                        feed_dict=feed_dict,
                                                                         options=run_options, run_metadata=run_metadata)
                 if accuracy > self.best_accuracy:
                     self.best_accuracy = accuracy
@@ -151,8 +151,7 @@ class ANN(object):
                 self.train_writer.add_summary(summ_ann, global_iteration)
                 self.train_writer.add_summary(summ_train, global_iteration)
             else:
-                self.tf_session.run(trainer.train_step, feed_dict={input_tensor: input_tensor_value,
-                                                                   desired_output: output_desired})
+                self.tf_session.run(trainer.train_step, feed_dict=feed_dict)
 
     def save(self, check_point_iteration=False, iteration=None, save_model=False):
         save_base_folder = os.path.join(os.path.join(self.base_folder, self.time_stamp), 'ANN_STORE_checkpoint')
