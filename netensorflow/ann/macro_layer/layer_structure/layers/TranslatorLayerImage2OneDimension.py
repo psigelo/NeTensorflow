@@ -1,6 +1,8 @@
 import json
 
 import os
+from functools import reduce
+
 import tensorflow as tf
 import uuid
 
@@ -28,7 +30,7 @@ class TranslatorLayerImage2OneDimension(object):
         if prev_layer.layer_type != LayerType.IMAGE:
             raise Exception('PrevLayerMustBeTypeImage')
 
-        self.inputs_amount = prev_layer.height_image * prev_layer.width_image * prev_layer.filters_amount
+        self.inputs_amount = int(reduce((lambda x,y: x*y) ,input_tensor.shape[1:]))
         with tf.name_scope('TranslatorLayerImage2OneDimension'):
             self.output = tf.reshape(input_tensor, [-1, self.inputs_amount])
 
