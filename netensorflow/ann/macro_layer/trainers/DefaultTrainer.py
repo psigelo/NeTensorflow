@@ -38,17 +38,14 @@ class DefaultTrainer(object):
                     labels=self.desired_output, logits=output_last_layer))
 
             with tf.name_scope('accuracy'):
-                with tf.name_scope('correct_prediction'):
-                    correct_prediction = tf.equal(tf.argmax(output_last_layer, 1),
-                                                  tf.argmax(self.desired_output, 1))
-                with tf.name_scope('accuracy'):
-                    self.accuracy = tf.reduce_mean(tf.cast(correct_prediction, tf.float32))
-
+                correct_prediction = tf.equal(tf.argmax(output_last_layer, 1),
+                                              tf.argmax(self.desired_output, 1))
+                self.accuracy = tf.reduce_mean(tf.cast(correct_prediction, tf.float32))
                 self.train_summary = tf.summary.merge([tf.summary.scalar('loss', self.loss_function),
                                                        tf.summary.scalar('accuracy', self.accuracy)])
         var_list = list()
-        for layers_str in self.layers_structures:
-            for layer in layers_str.layers:
+        for layers_structure in self.layers_structures:
+            for layer in layers_structure.layers:
                 var_list += layer.layer_variables
         self.train_step = tf.train.AdamOptimizer(self.learning_rate).minimize(self.loss_function, var_list=var_list)
 
