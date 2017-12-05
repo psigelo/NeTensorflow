@@ -9,7 +9,7 @@ from netensorflow.ann.ANNGlobals import register_netensorflow_class
 
 @register_netensorflow_class
 class DefaultTrainer(object):
-    def __init__(self, layers_structures=None, name='DefaultTrainer', restore=False):
+    def __init__(self, layers_structures=None, name='DefaultTrainer', restore=False, learning_rate=0.9):
         # ToDO: Name algorithm to take in account problems like two trainers with same name that can not
         #       restore properly.
         self.uuid = uuid.uuid4().hex
@@ -22,6 +22,7 @@ class DefaultTrainer(object):
         self.__train_summary = None
         self.__accuracy = None
         self.layers_structures = None
+        self.learning_rate = learning_rate  # Todo Make the correspond property for save and restore.
         if not restore:
             self.trainer_name = name + '_uuid_' + self.uuid
             self.layers_structures = layers_structures
@@ -50,8 +51,7 @@ class DefaultTrainer(object):
         for layers_str in self.layers_structures:
             for layer in layers_str.layers:
                 var_list += layer.layer_variables
-
-        self.train_step = tf.train.AdamOptimizer(1e-4).minimize(self.loss_function, var_list=var_list)
+        self.train_step = tf.train.AdamOptimizer(self.learning_rate).minimize(self.loss_function, var_list=var_list)
 
     def save_netensorflow_model(self, path):
         trainer_path = os.path.join(path, self.trainer_name)

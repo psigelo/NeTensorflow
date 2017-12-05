@@ -89,7 +89,7 @@ def main(filenames_tfrecords):
 
     # Train
     trainer = DefaultTrainer(layers_structures=[input_layer_structure, features_layer_structure,
-                                                logic_layer_structure, output_layer_structure])
+                                                logic_layer_structure, output_layer_structure], learning_rate=1e-4)
 
     # ANN
     ann = ANN(macro_layers=macro_layers, tf_session=tf_sess, base_folder='./tensorboard_logs/', trainer_list=[trainer],
