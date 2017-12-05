@@ -25,7 +25,7 @@ def main():
     tf_sess = tf.Session()
 
     # Layers
-    input_dim = [None, 784]
+    input_dim = [None, 7, 7]
     hidden_layer = FullConnected(inputs_amount=300)
     out_layer = FullConnectedWithSoftmaxLayer(inputs_amount=10)
 
