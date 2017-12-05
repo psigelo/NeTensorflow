@@ -23,10 +23,10 @@ StringToLayerType = {'ONE_DIMENSION': LayerType.ONE_DIMENSION, 'IMAGE': LayerTyp
 class LayerStructure(object):
     def __init__(self, layer_structure_name=None, layer_type=None, layers=None, restore=False):
         self.name = self.__class__.__name__ + '_uuid_' + uuid.uuid4().hex
+        self.save_and_restore_dictionary = dict()
         self.__layer_type = None
         self.__layer_structure_name = None
         self.layers = list()
-        self.save_and_restore_dictionary = dict()
 
         if not restore:
             self.layer_type = layer_type
