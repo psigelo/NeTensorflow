@@ -20,11 +20,12 @@ class DefaultTrainer(object):
         self.__loss_function = None
         self.__train_summary = None
         self.__accuracy = None
+        self.__learning_rate = None
         self.layers_structures = None
-        self.learning_rate = learning_rate  # Todo Make the correspond property for save and restore.
         if not restore:
             self.trainer_name = name + '_uuid_' + uuid.uuid4().hex
             self.layers_structures = layers_structures
+            self.learning_rate = learning_rate
 
     def create_loss_function(self):
         last_layer = self.layers_structures[-1].layers[-1]
@@ -128,3 +129,12 @@ class DefaultTrainer(object):
     def trainer_name(self, trainer_name):
         self.__trainer_name = trainer_name
         self.save_and_restore_dictionary['trainer_name'] = self.__trainer_name
+
+    @property
+    def learning_rate(self):
+        return self.__learning_rate
+
+    @learning_rate.setter
+    def learning_rate(self, learning_rate):
+        self.__learning_rate = learning_rate
+        self.save_and_restore_dictionary['learning_rate'] = self.__learning_rate
