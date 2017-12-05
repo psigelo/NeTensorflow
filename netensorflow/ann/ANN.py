@@ -123,7 +123,7 @@ class ANN(object):
                    verbose=True):
         for trainer in self.trainer_list:
             if trainers is not None:
-                if trainer.uuid not in list(map(lambda x: x.uuid, trainers)):
+                if trainer.name not in list(map(lambda x: x.name, trainers)):
                     continue
             input_tensor = self.first_layer.get_input_tensor()
             desired_output = trainer.desired_output
