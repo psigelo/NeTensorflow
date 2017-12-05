@@ -49,8 +49,7 @@ class ANN(object):
 
     def connect(self):
         layers_refs = list()
-
-        # first solve union problems in all layers
+        # first solve union problems in all layers (cases like layer from OneDimension to layer with more dims)
         prev_layer = None
         for layer_structures in self.macro_layers.layers_structure_list:
             for layer in layer_structures.layers:
@@ -63,7 +62,7 @@ class ANN(object):
                             raise Exception('CaseNotDefined')
                 prev_layer = layer
 
-        # first get all layers
+        # get all layers
         for layer_structures in self.macro_layers.layers_structure_list:
             for layers in layer_structures.layers:
                 layers_refs.append(layers)

@@ -68,7 +68,6 @@ def main(filenames_tfrecords):
 
     # Layers
     input_dim = [None, 7, 100, 3]
-    dataset_dimension = [None, 7, 100, 3]
     convolutional_pool_layer_1 = ConvolutionalLayerWithPoolMax2x2(height_patch=5, width_patch=5, filters_amount=32,
                                                                   strides=[1, 1, 1, 1])
     convolutional_pool_layer_2 = ConvolutionalLayerWithPoolMax2x2(height_patch=3, width_patch=3, filters_amount=64,
@@ -77,7 +76,7 @@ def main(filenames_tfrecords):
     out_layer = FullConnectedWithSoftmaxLayer(inputs_amount=3)
 
     # Layer Structures
-    input_layer_structure = InputLayerStructure(input_dim, dataset_dimension)
+    input_layer_structure = InputLayerStructure(input_dim, layer_type=LayerType.IMAGE)
     features_layer_structure = LayerStructure('Features', layer_type=LayerType.IMAGE,
                                               layers=[convolutional_pool_layer_1, convolutional_pool_layer_2])
     logic_layer_structure = LayerStructure('Logic', layer_type=LayerType.ONE_DIMENSION, layers=[logic_layer])
@@ -96,7 +95,7 @@ def main(filenames_tfrecords):
               tfdbg=False)
     ann.connect_and_initialize()
 
-    for it in range(100):
+    for it in range(1000):
         images, classifications = mdc_dataset.get_next_bash()
         ann.train_step(input_tensor_value=images.astype(np.float32), output_desired=classifications.astype(np.float32),
                        global_iteration=it)
