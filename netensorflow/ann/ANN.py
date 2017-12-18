@@ -143,9 +143,7 @@ class ANN(object):
                         print("New accuracy obtained: ", self.best_accuracy)
                         if not self.model_is_saved:
                             self.model_is_saved = True
-                            self.save(check_point_iteration=True, iteration=global_iteration, save_model=True)
-                        else:
-                            self.save(check_point_iteration=True, iteration=global_iteration)
+                        self.save(check_point_iteration=True, iteration=global_iteration, save_model=True)
                 if run_metadata is not None:
                     self.train_writer.add_run_metadata(run_metadata, 'step%d' % global_iteration)
                 self.train_writer.add_summary(summ_ann, global_iteration)
