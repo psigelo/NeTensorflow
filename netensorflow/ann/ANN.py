@@ -249,6 +249,9 @@ class ANN(object):
 
         return ann
 
+    def get_input_dimension(self):
+        return self.first_layer.inputs_dimension
+
     @property
     def id(self):
         return self.__id
