@@ -119,7 +119,7 @@ class ANN(object):
         return result
 
     def train_step(self, input_tensor_value, output_desired, global_iteration,  write_summaries=True, trainers=None,
-                   verbose=True, run_performance_store_prob=0.1):
+                   verbose=True, run_performance_store_prob=0.1, stop_at=None):
         for trainer in self.trainer_list:
             if trainers is not None:
                 if trainer.name not in list(map(lambda x: x.name, trainers)):
@@ -148,6 +148,10 @@ class ANN(object):
                     self.train_writer.add_run_metadata(run_metadata, 'step%d' % global_iteration)
                 self.train_writer.add_summary(summ_ann, global_iteration)
                 self.train_writer.add_summary(summ_train, global_iteration)
+
+                if stop_at is not None:
+                    if accuracy >= stop_at:
+                        return 'stop_at'
             else:
                 self.tf_session.run(trainer.train_step, feed_dict=feed_dict)
 
