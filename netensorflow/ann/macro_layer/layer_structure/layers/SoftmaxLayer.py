@@ -6,11 +6,13 @@ import uuid
 
 from netensorflow.ann.ANNGlobals import register_netensorflow_class
 from netensorflow.ann.macro_layer.layer_structure.LayerStructure import LayerTypeToString, StringToLayerType
+from netensorflow.ann.macro_layer.layer_structure.layers.AbsctractLayer import AbstractLayer
 
 
 @register_netensorflow_class
-class SoftmaxLayer(object):
+class SoftmaxLayer(AbstractLayer):
     def __init__(self, restore=False):
+        super(SoftmaxLayer, self).__init__()
         self.name = self.__class__.__name__ + '_uuid_' + uuid.uuid4().hex
         self.save_and_restore_dictionary = dict()
         self.__output = None

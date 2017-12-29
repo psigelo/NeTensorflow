@@ -6,13 +6,15 @@ import uuid
 
 from netensorflow.ann.ANNGlobals import register_netensorflow_class
 from netensorflow.ann.macro_layer.layer_structure.LayerStructure import LayerTypeToString, StringToLayerType
+from netensorflow.ann.macro_layer.layer_structure.layers.AbsctractLayer import AbstractLayer
 from netensorflow.ann.tensorflow_tools.variable_summaries import variable_summaries
 
 
 @register_netensorflow_class
-class ConvolutionalLayer(object):
+class ConvolutionalLayer(AbstractLayer):
     def __init__(self, height_patch=None, width_patch=None, filters_amount=None, strides=None,
                  padding='SAME', restore=False):
+        super(ConvolutionalLayer, self).__init__()
         self.name = self.__class__.__name__ + '_uuid_' + uuid.uuid4().hex
         self.save_and_restore_dictionary = dict()
         self.__prev_layer_inputs_amount = None  # must be a list of len 4 [N, H, W, C]

@@ -6,11 +6,13 @@ import uuid
 
 from netensorflow.ann.ANNGlobals import register_netensorflow_class
 from netensorflow.ann.macro_layer.layer_structure.LayerStructure import LayerType, LayerTypeToString, StringToLayerType
+from netensorflow.ann.macro_layer.layer_structure.layers.AbsctractLayer import AbstractLayer
 
 
 @register_netensorflow_class
-class InputLayer(object):
+class InputLayer(AbstractLayer):
     def __init__(self, inputs_dimension=None, layer_type=None, restore=False):
+        super(AbstractLayer, self).__init__()
         self.name = self.__class__.__name__ + '_uuid_' + uuid.uuid4().hex
         self.save_and_restore_dictionary = dict()
         self.__inputs_amount = None

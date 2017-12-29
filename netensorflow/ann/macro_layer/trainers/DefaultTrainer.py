@@ -50,6 +50,16 @@ class DefaultTrainer(object):
                 var_list += layer.layer_variables
         self.train_step = tf.train.AdamOptimizer(self.learning_rate).minimize(self.loss_function, var_list=var_list)
 
+    def trainers_hidden_placeholder_feed(self):
+        feed_dict = dict()
+        for layers_structure in self.layers_structures:
+            for layer in layers_structure.layers:
+                if layer.layer_hidden_placeholder is not None:
+                    hidden_placeholder_dict = layer.layer_hidden_placeholder
+                    if hidden_placeholder_dict is not None:
+                        feed_dict.update({hidden_placeholder_dict['placeholder']: hidden_placeholder_dict['training']})
+        return feed_dict
+
     def save_netensorflow_model(self, path):
         trainer_path = os.path.join(path, self.trainer_name)
         with open(trainer_path + '_internal_data.json', 'w') as fp:

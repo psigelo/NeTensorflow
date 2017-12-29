@@ -8,6 +8,7 @@ from netensorflow.ann.macro_layer.layer_structure.layers import FullConnected
 class FullConnectedDropout(FullConnected):
     def __init__(self, inputs_amount=None, keep_prob=None, restore=False):
         self.__drop_output = None
+        self.__keep_prob_feed = None
         self.__keep_prob = None
         if restore:
             super(FullConnectedDropout, self).__init__(restore=True)
@@ -18,13 +19,15 @@ class FullConnectedDropout(FullConnected):
     def connect_layer(self, prev_layer, input_tensor):
         with tf.name_scope('Dropout'):
             super(FullConnectedDropout, self).connect_layer(prev_layer, input_tensor)
-            self.drop_output = tf.nn.dropout(self.output, self.keep_prob)
-
-    def get_placeholder(self):
-        return self.keep_prob
+            self.__keep_prob_feed = tf.placeholder(tf.float32)
+            self.drop_output = tf.nn.dropout(self.output, self.__keep_prob_feed)
 
     def get_tensor(self):
         return self.__drop_output
+
+    @property
+    def layer_hidden_placeholder(self):
+        return {'placeholder': self.keep_prob_feed, 'training': self.keep_prob, 'running': 1.0}
 
     @property
     def drop_output(self):
@@ -45,3 +48,14 @@ class FullConnectedDropout(FullConnected):
     def keep_prob(self, keep_prob):
         self.__keep_prob = keep_prob
         self.save_and_restore_dictionary['keep_prob'] = self.__keep_prob
+
+    @property
+    def keep_prob_feed(self):
+        return self.__keep_prob_feed
+
+    @keep_prob_feed.setter
+    def keep_prob_feed(self, keep_prob_feed):
+        if isinstance(keep_prob_feed, str):
+            keep_prob_feed = tf.get_default_graph().get_tensor_by_name(keep_prob_feed)
+        self.__keep_prob_feed = keep_prob_feed
+        self.save_and_restore_dictionary['keep_prob_feed'] = self.__keep_prob_feed.name

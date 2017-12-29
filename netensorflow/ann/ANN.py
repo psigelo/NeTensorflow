@@ -101,12 +101,20 @@ class ANN(object):
         output_tensor = self.last_layer.get_tensor()
         run_options = None
         run_metadata = None
+        feed_dict = {input_tensor: input_tensor_value}
+        for layers_structures in self.macro_layers.layers_structure_list:
+                for layer in layers_structures.layers:
+                    if layer.layer_hidden_placeholder is not None:
+                        hidden_placeholder_dict = layer.layer_hidden_placeholder
+                        if hidden_placeholder_dict is not None:
+                            feed_dict.update(
+                                {hidden_placeholder_dict['placeholder']: hidden_placeholder_dict['running']})
         if write_summaries:
             if random.random() < 0.01:
                 run_options = tf.RunOptions(trace_level=tf.RunOptions.FULL_TRACE)
                 run_metadata = tf.RunMetadata()
             summaries_ann, result = self.tf_session.run([self.tf_summaries_ann, output_tensor],
-                                                        feed_dict={input_tensor: input_tensor_value},
+                                                        feed_dict=feed_dict,
                                                         options=run_options, run_metadata=run_metadata)
             if run_metadata is not None:
                 self.run_writer.add_run_metadata(run_metadata, 'step%d' % global_iteration)
@@ -114,7 +122,7 @@ class ANN(object):
             self.run_writer.add_summary(summaries_ann, global_iteration)
 
         else:
-            result = self.tf_session.run(output_tensor, feed_dict={input_tensor: input_tensor_value})
+            result = self.tf_session.run(output_tensor, feed_dict=feed_dict)
 
         return result
 
@@ -127,6 +135,8 @@ class ANN(object):
             input_tensor = self.first_layer.get_input_tensor()
             desired_output = trainer.desired_output
             feed_dict = {input_tensor: input_tensor_value, desired_output: output_desired}
+            feed_dict.update(trainer.trainers_hidden_placeholder_feed())
+
             if write_summaries:
                 run_options = None
                 run_metadata = None
