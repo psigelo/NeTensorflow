@@ -19,7 +19,7 @@ class FullConnectedDropout(FullConnected):
     def connect_layer(self, prev_layer, input_tensor):
         with tf.name_scope('Dropout'):
             super(FullConnectedDropout, self).connect_layer(prev_layer, input_tensor)
-            self.__keep_prob_feed = tf.placeholder(tf.float32)
+            self.keep_prob_feed = tf.placeholder(tf.float32)
             self.drop_output = tf.nn.dropout(self.output, self.__keep_prob_feed)
 
     def get_tensor(self):
