@@ -12,7 +12,7 @@ from netensorflow.ann.tensorflow_tools.variable_summaries import variable_summar
 
 @register_netensorflow_class
 class ConvolutionalLayer(AbstractLayer):
-    def __init__(self, height_patch=None, width_patch=None, filters_amount=None, strides=None,
+    def __init__(self, height_patch=None, width_patch=None, filters_amount=None, strides=list([1, 1, 1, 1]),
                  padding='SAME', restore=False):
         super(ConvolutionalLayer, self).__init__()
         self.name = self.__class__.__name__ + '_uuid_' + uuid.uuid4().hex
