@@ -48,14 +48,12 @@ class ConvolutionalLayer(AbstractLayer):
     def connect_layer(self, prev_layer, input_tensor):
         with tf.name_scope('ConvolutionalVariables'):
             with tf.name_scope('weights'):
-                with tf.device('/cpu:0'):
-                    self.weights = tf.Variable(tf.truncated_normal(
-                        [self.height_patch, self.width_patch, prev_layer.filters_amount, self.filters_amount],
-                        stddev=0.1))
+                self.weights = tf.Variable(tf.truncated_normal(
+                    [self.height_patch, self.width_patch, prev_layer.filters_amount, self.filters_amount],
+                    stddev=0.1))
                 self.summaries = self.summaries + variable_summaries(self.__weights)
             with tf.name_scope('bias'):
-                with tf.device('/cpu:0'):
-                    self.bias = tf.Variable(tf.constant(0.1, shape=[self.filters_amount]))
+                self.bias = tf.Variable(tf.constant(0.1, shape=[self.filters_amount]))
                 self.summaries = self.summaries + variable_summaries(self.__bias)
             self.output = tf.nn.relu(
                 tf.nn.conv2d(input_tensor, self.weights, self.strides, padding=self.padding) + self.bias)
