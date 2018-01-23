@@ -34,11 +34,13 @@ class FullConnected(AbstractLayer):
     def connect_layer(self, prev_layer, input_tensor):
         with tf.name_scope('FullConnectedVariables'):
             with tf.name_scope('weights'):
-                self.weights = tf.Variable(tf.truncated_normal(
-                    [prev_layer.inputs_amount, self.inputs_amount], stddev=0.1))
+                with tf.device('/cpu:0'):
+                    self.weights = tf.Variable(tf.truncated_normal(
+                        [prev_layer.inputs_amount, self.inputs_amount], stddev=0.1))
                 self.summaries = self.summaries + variable_summaries(self. weights)
             with tf.name_scope('bias'):
-                self.bias = tf.Variable(tf.constant(0.1, shape=[self.inputs_amount]))
+                with tf.device('/cpu:0'):
+                    self.bias = tf.Variable(tf.constant(0.1, shape=[self.inputs_amount]))
                 self.summaries = self.summaries + variable_summaries(self.bias)
             self.output = tf.matmul(input_tensor, self.weights) + self.bias
 
