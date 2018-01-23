@@ -176,9 +176,9 @@ class ANN(object):
             accuracy_validation = self.tf_session.run(trainer.accuracy, feed_dict=feed_dict)
             print("accuracy_validation: ", accuracy_validation)
             if accuracy_validation > self.best_accuracy:
+                print("New Champion with validation dataset")
                 self.best_accuracy = accuracy_validation
                 if not self.model_is_saved:
-                    print("New Champion with validation dataset")
                     self.model_is_saved = True
                 self.save(check_point_iteration=True, iteration=global_iteration, save_model=True)
             return accuracy_validation
