@@ -164,7 +164,7 @@ class ANN(object):
                 _, accuracy = self.tf_session.run(trainer.train_step, trainer.accuracy, feed_dict=feed_dict)
             return accuracy
 
-    def save_best_validate_accuracy(self, trainers, input_validation_set, output_validation_set, global_iteration):
+    def save_best_validate_accuracy(self, input_validation_set, output_validation_set, global_iteration, trainers=None):
         for trainer in self.trainer_list:
             if trainers is not None:
                 if trainer.name not in list(map(lambda x: x.name, trainers)):
