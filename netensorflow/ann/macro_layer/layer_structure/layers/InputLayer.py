@@ -41,7 +41,8 @@ class InputLayer(AbstractLayer):
                 raise Exception('layer_type not supported')
 
             with tf.name_scope('InputLayer'):
-                self.inputs = tf.placeholder(tf.float32, inputs_dimension)
+                with tf.device('/cpu:0'):
+                    self.inputs = tf.placeholder(tf.float32, inputs_dimension)
 
     def get_tensor(self):
         return self.inputs
