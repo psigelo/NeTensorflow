@@ -173,7 +173,7 @@ class ANN(object):
             desired_output = trainer.desired_output
             feed_dict = {input_tensor: input_validation_set, desired_output: output_validation_set}
             feed_dict.update(trainer.trainers_hidden_placeholder_feed())
-            accuracy_validation = self.tf_session.run([trainer.accuracy], feed_dict=feed_dict)
+            accuracy_validation = self.tf_session.run(trainer.accuracy, feed_dict=feed_dict)
             print("accuracy_validation: ", accuracy_validation)
             if accuracy_validation > self.best_accuracy:
                 self.best_accuracy = accuracy_validation
