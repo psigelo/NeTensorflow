@@ -1,5 +1,6 @@
 from .ConvolutionalLayer import ConvolutionalLayer
 from .ConvolutionalLayerWithPoolMax2x2 import ConvolutionalLayerWithPoolMax2x2
+from .ConvolutionalLayerWithPoolNorm import ConvolutionalLayerWithPoolNorm
 from .FullConnected import FullConnected
 from .FullConnectedDropout import FullConnectedDropout
 from .FullConnectedWithSoftmaxLayer import FullConnectedWithSoftmaxLayer
