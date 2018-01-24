@@ -42,7 +42,7 @@ class FullConnected(AbstractLayer):
                 with tf.device('/cpu:0'):
                     self.bias = tf.Variable(tf.constant(0.1, shape=[self.inputs_amount]))
                 self.summaries = self.summaries + variable_summaries(self.bias)
-            self.output = tf.matmul(input_tensor, self.weights) + self.bias
+            self.output = tf.nn.relu(tf.matmul(input_tensor, self.weights) + self.bias)
 
         self.save_and_restore_dictionary.update({'weight': self.weights.name, 'bias': self.bias.name,
                                                  'summaries': list(map(lambda s: s.name, self.summaries))})
