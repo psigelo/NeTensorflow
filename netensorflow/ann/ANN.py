@@ -110,16 +110,16 @@ class ANN(object):
                             feed_dict.update(
                                 {hidden_placeholder_dict['placeholder']: hidden_placeholder_dict['running']})
         if write_summaries:
-            if random.random() < 0.01:
-                run_options = tf.RunOptions(trace_level=tf.RunOptions.FULL_TRACE)
-                run_metadata = tf.RunMetadata()
+            # if random.random() < 0.01:
+            #    run_options = tf.RunOptions(trace_level=tf.RunOptions.FULL_TRACE)
+            #    run_metadata = tf.RunMetadata()
             summaries_ann, result = self.tf_session.run([self.tf_summaries_ann, output_tensor],
                                                         feed_dict=feed_dict,
                                                         options=run_options, run_metadata=run_metadata)
-            if run_metadata is not None:
-                self.run_writer.add_run_metadata(run_metadata, 'step%d' % global_iteration)
+            # if run_metadata is not None:
+            #    self.run_writer.add_run_metadata(run_metadata, 'step%d' % global_iteration)
 
-            self.run_writer.add_summary(summaries_ann, global_iteration)
+            # self.run_writer.add_summary(summaries_ann, global_iteration)
 
         else:
             result = self.tf_session.run(output_tensor, feed_dict=feed_dict)
